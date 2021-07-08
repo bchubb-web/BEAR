@@ -3,5 +3,11 @@
     "name": "billy chubb",
     "age": 17,
     "gender": "male"
+    },
+
+    {
+    "name": "john smith",
+    "age": 69,
+    "gender":"idk"
     }
 ]

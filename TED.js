@@ -81,15 +81,19 @@ function addFriend(MongoClient,url, name, age, gender){
 
 function returnFriends(MongoClient,url){
     MongoClient.connect(url, function(err,db){
-    if(err) throw err;
+    if(err){console.log("AHHHH")};
     var dbo = db.db("BEAR");
     dbo.collection("Bear_Friends").find({}).toArray(function(err,result){
         if (err){console.log("SHID")};
+        var friends = []
+        for(var i = 0;i<result.length;i++){
+            friends.append("<p>"+result[i].name+"</p>");
+        }
         db.close();
+        return friends;
     });
-    for(var i = 0;i<result.length;i++){
-        res.send("<p>"+result[i].name+"</p>");
-    }
+
+
 });
 }
 
@@ -104,7 +108,9 @@ app.set('title', 'BEAR');
 
 app.get('/',(req,res) => {
     //send head of page
-    res.render('index')
+    res.render('index',{
+        friends: returnFriends(MongoClient,dbUrl)
+    });
 });
 
 app.get('/index',(req,res)=>{

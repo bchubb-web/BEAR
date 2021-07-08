@@ -1,5 +1,9 @@
 *{
     font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color: #2e2e2e;
+}
+::-webkit-scrollbar {
+    display: none;
 }
 
 p{
@@ -80,6 +84,7 @@ main{
     display: flex;
     align-items: center;
     justify-content:center;
+    height: 100%;
 }
 
 .header-icon>img{
@@ -99,4 +104,22 @@ main{
     font-size: 2rem;
     text-decoration: none;
     color: #111;
+}
+
+.col-mid>h2{
+    text-decoration: underline;
+}
+
+.friends{
+    list-style-type: none;
+
+}
+
+.friends-cont{
+    border: #d1d1d1 1px solid;
+    height: 300px;
+    overflow-y: scroll;
+    padding: 1.6rem 2rem;
+    border-radius: 8px;
+    margin-top: 1rem;
 }

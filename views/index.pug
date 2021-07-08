@@ -16,6 +16,11 @@ main
     h2 Read through the creation process
     a(href='../public/files/DOCS.docx' download='') CLICK
   section.sect-col.col-mid
+    h2 The Bear's friends:
+    .friends-cont
+      ul.friends
+        each val in {friends}
+          li= val
   section.sect-col.col-right
     form.bear-form(action='/speak' method='post')
       h2 Type something for the bear to say!
