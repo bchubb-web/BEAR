@@ -1,0 +1,102 @@
+*{
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+
+p{
+    line-height: 1.85;
+}
+
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 6vh;
+    padding: 2rem 3.6rem;
+    border-bottom: #111 1px solid;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.header-main{
+    border: 1px solid #111;
+}
+
+main{
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-direction: row;
+}
+
+.sect-col{
+    margin: 2rem 1rem;
+    border: 1px solid #d1d1d1;
+    border-radius: 1em;
+    flex: 1 1 100%;
+    padding: 2rem 1.6rem;
+    background-color: #f0f0f0;
+}
+
+.col-left{
+    margin-left: 4rem;
+}
+
+.col-right{
+    margin-right: 4rem;
+}
+
+.bear-form{
+    margin: 1rem;
+    border: #d1d1d1 1px solid;
+    border-radius: 1rem;
+    padding: 2rem 2rem 2.4rem;
+}
+
+.bear-form>div{
+    margin-top: 2rem;
+    display: flex;
+}
+
+.bear-form>div>input{
+    flex: 1 1 80%;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    
+}
+
+.bear-form>div>button{
+    flex: 0 1 10%;
+    background-color: #8c6348;
+    color: #fff;
+    font-size: 1.25rem;
+    padding:0 1rem;
+}
+
+.header-icon{
+    padding-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+}
+
+.header-icon>img{
+    width: auto;
+    height: 90%;
+}
+
+.header-nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 25%;
+    margin-right: 50%;
+}
+
+.header-link{
+    font-size: 2rem;
+    text-decoration: none;
+    color: #111;
+}

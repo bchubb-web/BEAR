@@ -1,0 +1,27 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  link(rel='stylesheet' href='public/styles/style.css')
+  title TED
+header
+  .header-icon
+    img(src='public/images/teddy-bear.svg' alt='bear')
+    h1 The Bear
+  h3.header-sub An automated user database
+  p.header-min designed and built by Billy Chubb
+main
+  section.sect-col.col-left
+    h2 Read through the creation process
+    a(href='../public/files/DOCS.docx' download='') CLICK
+  section.sect-col.col-mid
+  section.sect-col.col-right
+    form.bear-form(action='/speak' method='post')
+      h2 Type something for the bear to say!
+      p
+        | Interact with and communicate through the bear with this text box, simply type your message and the bear will say it out loud.
+      div
+        input(type='text' name='text' placeholder='TYPE:')
+        button(type='submit') Say
+script(src='public/js/scripts.js')
