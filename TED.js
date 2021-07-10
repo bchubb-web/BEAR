@@ -87,7 +87,7 @@ function returnFriends(MongoClient,url){
         if (err){console.log("SHID")};
         var friends = []
         for(var i = 0;i<result.length;i++){
-            friends.append("<p>"+result[i].name+"</p>");
+            friends.push("<p>"+result[i].name+"</p>");
         }
         db.close();
         return friends;
