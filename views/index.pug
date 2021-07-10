@@ -19,7 +19,7 @@ main
     h2 The Bear's friends:
     .friends-cont
       ul.friends
-        each val in {friends}
+        each val in friends
           li= val
   section.sect-col.col-right
     form.bear-form(action='/speak' method='post')

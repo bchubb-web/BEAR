@@ -8,11 +8,11 @@ video_capture = cv2.VideoCapture(0)
 #start video capture
 
 def getStatus():
-    status = requests.get('http://localhost:3000/data')
+    status = requests.get('http://192.168.1.129:3000/data')
     return str(status)
 
 def send_face(x,y,w,h):
-    url = "http://localhost:3000/face/"
+    url = "http://192.168.1.129:3000/face/"
     #node post request location
     payload='x={0}&y={1}&w={2}&h={3}'.format(x,y,w,h)
     #input the co ordinated into form data
@@ -69,7 +69,7 @@ while True:
     cv2.line(frames,(320,0),(320,480),(0,0,255),1)
     #draw a vertical line splitting the viewport into two halves
 
-    cv2.putText(frames,getStatus(),(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2,cv2.LINE_AA)
+    #cv2.putText(frames,getStatus(),(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2,cv2.LINE_AA)
 
     cv2.imshow('Video', frames)
     #return updated frame

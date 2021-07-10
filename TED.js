@@ -1,3 +1,5 @@
+//MODULES USED
+
 const {exec} = require("child_process");
 var SerialPort = require('serialport');
 try{
@@ -14,12 +16,13 @@ const app = express();
 const pug = require('pug');
 
 const MongoClient = require("mongodb").MongoClient;
-const dbUrl = "mongodb://localhost:27017";
+const dbUrl = "mongodb://localhost:27017/";
 
 const path = require("path");
 const file = require("fs");
 
-//MODULES USED
+
+//  INIT EXPRESS FOLDERS
 
 app.use('/public/styles',express.static(__dirname+'/styles'));
 app.use('/public/js',express.static(__dirname+'/js'));
@@ -27,22 +30,21 @@ app.use('/public/images',express.static(__dirname+'/images'));
 app.use('/public/files',express.static(__dirname+'/../documentation'))
 app.use(bodyParser.urlencoded({extended: true}));
 
-//INIT EXPRESS FOLDERS
 
-var data = {}
+//  VARIABLES
+
+var data = {};
 var status = 'Running';
 var speech = 'Hello World';
 
 function turnLeft(port){
     //SENDS SERIAL DATA TO ARDUINO FOR A LEFT TURN
-    port.write('6',function(err){
-        if(err)throw err;});
+    port.write('6',function(err){if(err)throw err;});
 }
 
 function turnRight(port){
     //SENDS SERIAL DATA TO ARDUINO FOR A RIGHT TURN
-    port.write('9',function(err){
-        if(err)throw err;});
+    port.write('9',function(err){if(err)throw err;});
 }
 
 function findFriend(MongoClient, url, name){
@@ -80,75 +82,58 @@ function addFriend(MongoClient,url, name, age, gender){
 }
 
 function returnFriends(MongoClient,url){
-    MongoClient.connect(url, function(err,db){
-    if(err){console.log("AHHHH")};
-    var dbo = db.db("BEAR");
-    dbo.collection("Bear_Friends").find({}).toArray(function(err,result){
-        if (err){console.log("SHID")};
-        var friends = []
-        for(var i = 0;i<result.length;i++){
-            friends.push("<p>"+result[i].name+"</p>");
-        }
-        db.close();
-        return friends;
-    });
 
 
-});
 }
 
 
-//    SET
+//  SET
+
 app.set('views',path.join(__dirname+'/views'));
 app.set('view engine','pug');
 app.set('title', 'BEAR');
 
 
-//    GET 
+//  GET 
 
 app.get('/',(req,res) => {
     //send head of page
-    res.render('index',{
-        friends: returnFriends(MongoClient,dbUrl)
+    MongoClient.connect(dbUrl,{useUnifiedTopology: true}, function(err,db){//connect to MONGO
+        if (err) throw err;//if any errors then return them
+        var dbo = db.db("BEAR");//sepecify the database we want
+
+        dbo.collection("Bear_Friends").find({}).toArray(function(err,result){//find collection and return all documents to an array
+            if (err) throw err;
+            var friends = [];
+            for(var i = 0; i<result.length;i++) friends.push("> "+result[i]['name']);
+            db.close();
+            res.render('index',{
+                friends: friends
+            });
+        });
     });
 });
 
-app.get('/index',(req,res)=>{
-    res.sendFile()
-});
 
-app.get('/face',(req,res)=>{
-    //page that shows most recent co-ordinates of a face
-    res.send(data);
-});
-
-
-app.get('/friends',(req,res)=>{
-    res.sendFile(path.join(__dirname+"/index.html"));
-});
-
-//    POST
+//  POST
 
 app.post('/face',(req,res)=>{
-    console.log(req.body);
+    //console.log(req.body);
     data = req.body;
     var x = parseInt(data.x);
     var y = parseInt(data.y);
     var w = parseInt(data.w);
     var h = parseInt(data.h);
-    if (x > 320){
-        turnRight(port);
-	    console.log("right");
-	}
-    if (x+w < 320){
-        turnLeft(port);
-	    console.log("left");
-    }
+    if (x > 320) turnRight(port);
+    if (x+w < 320) turnLeft(port);
+    //if face is off-center, send serial data to arduino to rotate stepper motor to rectify
+
     res.sendStatus(200)
 });
 
 app.post('/speak',(req,res)=>{
-     speech = req.body.text;
+     speech = req.body.text;//take the posted data and store it to the speach variable
+     console.log(speech);
 });
 
 app.post('/friend',(req,res)=>{
@@ -156,10 +141,13 @@ app.post('/friend',(req,res)=>{
     var age = data.age;
     var name = data.name;
     var gender = data.gender;
+
+    //store all the posted data to variables
+
     status = addFriend(MongoClient,dbUrl,name,age,gender);
+
     res.sendStatus(200);
 });
 
-
-
+//  INIT server on port 3000
 app.listen(3000,console.log('TED active'));
