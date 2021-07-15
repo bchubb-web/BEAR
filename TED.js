@@ -53,7 +53,7 @@ function findFriend(MongoClient, url, name){
         //connect to mongo
         if(err) throw err;
         var dbo = db.db("BEAR");//find the correct db
-        dbo.collection("Bear_Friends").find({},{ projection:{name: name}//select the record within the friends collection that matches the name parameter given
+        dbo.collection("Bear_Friends").find({},{projection:{name: name}//select the record within the friends collection that matches the name parameter given
         }).toArray(function(err,result){
             if(err) throw err;//    <<TODO>>    handle errors to return false, meaning the name given isnt found in the database
             console.log(result);
