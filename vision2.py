@@ -1,6 +1,12 @@
 import face_recognition
 import cv2
 import numpy as np
+import os
+import pymongo
+
+client = pymongo.MongoClient("mongodb://localhost:27017/")
+db = client["BEAR"]
+collection = db["Bear_Friends"]
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
 # other example, but it includes some basic performance tweaks to make things run a lot faster:
@@ -12,7 +18,21 @@ import numpy as np
 # specific demo. If you have trouble installing it, try any of the other demos that don't require it instead.
 
 # Get a reference to webcam #0 (the default one)
+
+def new_face(collection):
+    print(collection)
+
+
+new_face(collection)
+
 video_capture = cv2.VideoCapture(0)
+
+direc = os.listdir("C:\\Users\\chubb\\OneDrive\\Documents\\GitHub\BEAR\\Faces")
+for i in range(len(direc)):
+    current_face = face_recognition.load_image_file("C:\\Users\\chubb\\OneDrive\\Documents\\GitHub\BEAR\\Faces\\"+direc[i])
+    current_encoding = face_recognition.face_encodings(current_face)[0]
+    known_face_encodings
+
 
 # Load a sample picture and learn how to recognize it.
 obama_image = face_recognition.load_image_file("obama.jpg")
@@ -37,6 +57,9 @@ known_face_encodings = [
     #sabu_face_encoding,
     #ramos_face_encoding
 ]
+
+
+
 known_face_names = [
     "Barack Obama",
     "Joe Biden",

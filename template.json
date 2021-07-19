@@ -1,0 +1,19 @@
+[
+    {
+        "name":"barack",
+        "encoding":"",
+        "image":"obama.jpg"
+    },
+    
+    {
+        "name":"joe",
+        "encoding":"",
+        "image":"biden.jpg"
+    },
+
+    {
+        "name":"billy",
+        "encoding":"",
+        "image":"chubb.jpg"
+    },
+]
