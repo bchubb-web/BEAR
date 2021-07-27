@@ -30,47 +30,18 @@ new_face(collection)
 video_capture = cv2.VideoCapture(0)
 
 known_face_encodings = []
-
-direc = os.listdir("C:\\Users\\chubb\\OneDrive\\Documents\\GitHub\BEAR\\Faces")
+known_face_names = []
+direc = os.listdir("D:\\CODE\\BEAR\\BEAR\\Faces")
 for i in range(len(direc)):
     current_face = face_recognition.load_image_file("C:\\Users\\chubb\\OneDrive\\Documents\\GitHub\BEAR\\Faces\\"+direc[i])
-    current_encoding = face_recognition.face_encodings(current_face)[0]
+    try:
+        current_encoding = face_recognition.face_encodings(current_face)[0]
+    except:
+        print(known_face_encodings)
+    
     known_face_encodings.append(current_encoding)
+    known_face_names.append(direc[i][:-4])
 
-
-# Load a sample picture and learn how to recognize it.
-obama_image = face_recognition.load_image_file("obama.jpg")
-obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
-
-biden_image = face_recognition.load_image_file("biden.jpg")
-biden_face_encoding = face_recognition.face_encodings(biden_image)[0]
-'''
-chubb_image = face_recognition.load_image_file("chubb.jpg")
-chubb_face_encoding = face_recognition.face_encodings(chubb_image)[0]
-
-sabu_image = face_recognition.load_image_file("sabu.jpg")
-sabu_face_encoding = face_recognition.face_encodings(sabu_image)[0]
-
-ramos_image = face_recognition.load_image_file("ramos.jpg")
-ramos_face_encoding = face_recognition.face_encodings(ramos_image)[0]'''
-# Create arrays of known face encodings and their names
-known_face_encodings = [
-    obama_face_encoding,
-    biden_face_encoding,
-    #chubb_face_encoding,
-    #sabu_face_encoding,
-    #ramos_face_encoding
-]
-
-
-
-known_face_names = [
-    "Barack Obama",
-    "Joe Biden",
-    "big penis",
-    "alan sabu",
-    "anton ramos"
-]
 
 # Initialize some variables
 face_locations = []
@@ -99,7 +70,7 @@ while True:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Big Penis"
-
+            name = getName
             # # If a match was found in known_face_encodings, just use the first one.
             # if True in matches:
             #     first_match_index = matches.index(True)
@@ -125,7 +96,7 @@ while True:
         left *= 4
 
         # Draw a box around the face
-        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+        cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
 
         # Draw a label with a name below the face
         cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
