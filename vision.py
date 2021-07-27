@@ -12,7 +12,7 @@ def getStatus():
     return str(status)
 
 def send_face(x,y,w,h):
-    url = "http://192.168.1.129:3000/face/"
+    url = "http://localhost:3000/face/"
     #node post request location
     payload='x={0}&y={1}&w={2}&h={3}'.format(x,y,w,h)
     #input the co ordinated into form data

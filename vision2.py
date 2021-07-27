@@ -5,7 +5,7 @@ import os
 import pymongo
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
-db = client["BEAR"]
+db = client["Bear"]
 collection = db["Bear_Friends"]
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
@@ -20,18 +20,22 @@ collection = db["Bear_Friends"]
 # Get a reference to webcam #0 (the default one)
 
 def new_face(collection):
-    print(collection)
+    for document in collection.find():
+        print(document)
+
 
 
 new_face(collection)
 
 video_capture = cv2.VideoCapture(0)
 
+known_face_encodings = []
+
 direc = os.listdir("C:\\Users\\chubb\\OneDrive\\Documents\\GitHub\BEAR\\Faces")
 for i in range(len(direc)):
     current_face = face_recognition.load_image_file("C:\\Users\\chubb\\OneDrive\\Documents\\GitHub\BEAR\\Faces\\"+direc[i])
     current_encoding = face_recognition.face_encodings(current_face)[0]
-    known_face_encodings
+    known_face_encodings.append(current_encoding)
 
 
 # Load a sample picture and learn how to recognize it.

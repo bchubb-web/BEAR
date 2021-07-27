@@ -73,10 +73,7 @@ i++;
 
 
 void loop() {
-      //reset motor magnets
-    write(0,0,0,0);
-    //delay 1 microsecond
-    delay(2);
+
   if (Serial.available() > 0) {
     //if there is data send over serial
     char data = Serial.read();
@@ -84,6 +81,21 @@ void loop() {
     //Serial.println(data);
     //return data
 
+     switch(data){
+      case '9':
+        rightStep();
+        break;
+     }
+     case '6':
+        leftStep();
+        break;
+
+     default:
+        //reset motor magnets
+        write(0,0,0,0);
+        //delay 1 microsecond
+        delay(2);
+        break;
     if (data == '6'){
       //if the data is the code for left
       Serial.println("left<<");

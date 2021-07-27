@@ -3,7 +3,7 @@
 const {exec} = require("child_process");
 var SerialPort = require('serialport');
 try{
-    var port = new SerialPort("COM4", {baudRate:9600});
+    var port = new SerialPort("COM3", {baudRate:9600});
 }
 catch(err){
     console.log("ARDUINO NOT FOUND");
@@ -38,11 +38,13 @@ var status = 'Running';
 var speech = 'Hello World';
 
 function turnLeft(port){
+    console.log("LEFT");
     //SENDS SERIAL DATA TO ARDUINO FOR A LEFT TURN
     port.write('6',function(err){if(err)throw err;});
 }
 
 function turnRight(port){
+    console.log("RIGHT");
     //SENDS SERIAL DATA TO ARDUINO FOR A RIGHT TURN
     port.write('9',function(err){if(err)throw err;});
 }
@@ -118,7 +120,7 @@ app.get('/',(req,res) => {
 //  POST
 
 app.post('/face',(req,res)=>{
-    //console.log(req.body);
+    console.log(req.body);
     data = req.body;
     var x = parseInt(data.x);
     var y = parseInt(data.y);

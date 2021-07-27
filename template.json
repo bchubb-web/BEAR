@@ -1,19 +1,19 @@
 [
     {
-        "name":"barack",
-        "encoding":"",
+        "name":"barack obama",
+        "encoding":[],
         "image":"obama.jpg"
     },
     
     {
-        "name":"joe",
-        "encoding":"",
+        "name":"joe biden",
+        "encoding":[],
         "image":"biden.jpg"
     },
 
     {
-        "name":"billy",
-        "encoding":"",
+        "name":"billy chubb",
+        "encoding":[],
         "image":"chubb.jpg"
-    },
+    }
 ]
