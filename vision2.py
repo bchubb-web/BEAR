@@ -37,12 +37,12 @@ for i in range(len(direc)):
     try:
         current_encoding = face_recognition.face_encodings(current_face)[0]
     except:
-        print(known_face_encodings)
-    
+        print(direc[i][:-4]+": ", current_encoding.tolist())
+        
     known_face_encodings.append(current_encoding)
     known_face_names.append(direc[i][:-4])
 
-
+#print("FACES: ", known_face_encodings)
 # Initialize some variables
 face_locations = []
 face_encodings = []
@@ -70,7 +70,7 @@ while True:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Big Penis"
-            name = getName
+
             # # If a match was found in known_face_encodings, just use the first one.
             # if True in matches:
             #     first_match_index = matches.index(True)
@@ -104,7 +104,7 @@ while True:
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     # Display the resulting image
-    cv2.imshow('Video', frame)
+    cv2.imshow('Peeop', frame)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
