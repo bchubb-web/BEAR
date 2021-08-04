@@ -14,7 +14,8 @@ async def unknown(encoding, collection):
         "name": name,
         "encoding":encoding
     }
-    x = collection.insert_one(obj)
+    print(obj)
+    #x = collection.insert_one(obj)
 
 
 
@@ -84,13 +85,16 @@ while True:
         boxColour = (0, 255, 0)
         if name == "Not Recognised":
             boxColour = (0, 0, 255)
+            real_face_index = real_face_names.index(name)
+            unknown_encoding = real_face_encodings[real_face_index]
+            unknown("", collection)
         
         #sketch box around located face
         cv2.rectangle(frame,(left-8,top-8),(right+8,bottom+8),boxColour,2)
         #sketch rectangle for facial identifier
-        cv2.rectangle(frame,(left,bottom-24),(right,bottom),boxColour,cv2.FILLED)
+        cv2.rectangle(frame,(left,bottom-32),(right,bottom),boxColour,cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(frame, name, (left+6, bottom-6), font, 0.6, (255, 255, 255), 1)
+        cv2.putText(frame, name, (left+6, bottom-14), font, 0.6, (255, 255, 255), 1)
 
     #output formatted frame
     cv2.line(frame,(320,0),(320,480),(255,0,0),1)
