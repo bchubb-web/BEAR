@@ -1,5 +1,6 @@
 import face_recognition
 import cv2
+import asyncio
 from face_recognition.api import face_locations
 import numpy as np
 import os
@@ -8,16 +9,17 @@ import pymongo
 def verify_friend(name):
     pass
 
-async def unknown(encoding, collection):
+def unknown(encoding, collection):
     name = input("unrecognised face, please input full name: ")
     obj = {
         "name": name,
         "encoding":encoding
     }
-    print(obj)
-    #x = collection.insert_one(obj)
+    #print(obj)
+    x = collection.insert_one(obj)
 
-
+def send_location():
+    pass
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")#connect to the mongodb
 db = client["Bear"]#select database
@@ -30,9 +32,11 @@ for document in collection.find():#look through each document
     name = document["name"]
     encoding = document["encoding"]
     logged_face_encodings.append(np.array(encoding))
+    if name not in logged_face_names:
+        print(f"encoding gathered from DB ~ [{name}]")
     logged_face_names.append(name)
     #append the encoding and associated name to relevant lists
-    print(f"encoding gathered from DB ~ [{name}]")
+    
 
 stream = cv2.VideoCapture(0)#init video stream through the bear's webcam
 
@@ -58,8 +62,8 @@ while True:
         real_face_names = []
         for current_encoding in real_face_encodings:
 
-            matches = face_recognition.compare_faces(logged_face_encodings, current_encoding,0.8)
-            name = "Not Regognised"#default 'name' placeholder
+            matches = face_recognition.compare_faces(logged_face_encodings, current_encoding,0.65)
+            name = "Not Recognised"#default 'name' placeholder
 
             real_face_distances = face_recognition.face_distance(logged_face_encodings,current_encoding)
             best_encoding_index = np.argmin(real_face_distances)#get the index of the selected face from the logged 'friends'
@@ -84,10 +88,15 @@ while True:
 
         boxColour = (0, 255, 0)
         if name == "Not Recognised":
+            print("UNKNOWN FACE DETECTED")
             boxColour = (0, 0, 255)
             real_face_index = real_face_names.index(name)
             unknown_encoding = real_face_encodings[real_face_index]
-            unknown("", collection)
+            unknown_encoding = unknown_encoding.tolist()
+            unknown(unknown_encoding, collection)
+            continue
+        else:
+            send_location()
         
         #sketch box around located face
         cv2.rectangle(frame,(left-8,top-8),(right+8,bottom+8),boxColour,2)
