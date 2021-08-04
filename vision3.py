@@ -8,6 +8,15 @@ import pymongo
 def verify_friend(name):
     pass
 
+async def unknown(encoding, collection):
+    name = input("unrecognised face, please input full name: ")
+    obj = {
+        "name": name,
+        "encoding":encoding
+    }
+    x = collection.insert_one(obj)
+
+
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")#connect to the mongodb
 db = client["Bear"]#select database
@@ -22,7 +31,7 @@ for document in collection.find():#look through each document
     logged_face_encodings.append(np.array(encoding))
     logged_face_names.append(name)
     #append the encoding and associated name to relevant lists
-    print(f"encoding gathered from DB ~ [{name}]\n{encoding}")
+    print(f"encoding gathered from DB ~ [{name}]")
 
 stream = cv2.VideoCapture(0)#init video stream through the bear's webcam
 
@@ -48,7 +57,7 @@ while True:
         real_face_names = []
         for current_encoding in real_face_encodings:
 
-            matches = face_recognition.compare_faces(logged_face_encodings, current_encoding)
+            matches = face_recognition.compare_faces(logged_face_encodings, current_encoding,0.8)
             name = "Not Regognised"#default 'name' placeholder
 
             real_face_distances = face_recognition.face_distance(logged_face_encodings,current_encoding)
@@ -56,7 +65,7 @@ while True:
             if matches[best_encoding_index]:
                 name = logged_face_names[best_encoding_index]
                 #set the name placeholder to the encoding's related name
-
+            
             real_face_names.append(name)
             #add the name to local names within the loop
 
@@ -65,20 +74,27 @@ while True:
     #process and format frame
     for (top,right,bottom,left), name in zip(real_face_locations, real_face_names):
             
-        #scale the processed image after faceial detection has been run
+        #scale the processed image after facial detection has been run
         top *= 4
         right *= 4
         bottom *= 4
         left *= 4
 
+
+        boxColour = (0, 255, 0)
+        if name == "Not Recognised":
+            boxColour = (0, 0, 255)
+        
         #sketch box around located face
-        cv2.rectangle(frame,(left,top),(right,bottom),(0,255,0),2)
+        cv2.rectangle(frame,(left-8,top-8),(right+8,bottom+8),boxColour,2)
         #sketch rectangle for facial identifier
-        cv2.rectangle(frame,(left,bottom-24),(right,bottom),(0,0,255),cv2.FILLED)
+        cv2.rectangle(frame,(left,bottom-24),(right,bottom),boxColour,cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left+6, bottom-6), font, 0.6, (255, 255, 255), 1)
 
     #output formatted frame
+    cv2.line(frame,(320,0),(320,480),(255,0,0),1)
+
     cv2.imshow("The Bear", frame)
 
     #if Q key pressed then stop program

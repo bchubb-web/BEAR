@@ -9,6 +9,7 @@ face_encodings = []
 face_names = []
 everyOtherFrame = True
 
+face_found = False
 stream = cv2.VideoCapture(0)
 
 while True:
@@ -40,6 +41,9 @@ while True:
         cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, "Friend?..", (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+        if not face_found:
+            print(face_encodings[0].tolist())
+            face_found = True
     cv2.imshow("init new face", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
