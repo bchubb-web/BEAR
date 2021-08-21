@@ -21,33 +21,42 @@ def unknown(encoding, collection):
 def send_location():
     pass
 
+def load_encodings(collection):
+    logged_face_encodings = []
+    logged_face_names = []
+    for document in collection.find():#look through each document
+        name = document["name"]
+        encoding = document["encoding"]
+        logged_face_encodings.append(np.array(encoding))
+        if name not in logged_face_names:
+            print(f"encoding gathered from DB ~ [{name}]")
+        logged_face_names.append(name)
+        #append the encoding and associated name to relevant lists
+    return logged_face_encodings, logged_face_names
+
+
+
 client = pymongo.MongoClient("mongodb://localhost:27017/")#connect to the mongodb
 db = client["Bear"]#select database
 collection = db["Bear_Friends"]#select collection (table) from the db
 
-logged_face_encodings = []
-logged_face_names = []
+logged_face_encodings, logged_face_names = load_encodings(collection)
 
-for document in collection.find():#look through each document
-    name = document["name"]
-    encoding = document["encoding"]
-    logged_face_encodings.append(np.array(encoding))
-    if name not in logged_face_names:
-        print(f"encoding gathered from DB ~ [{name}]")
-    logged_face_names.append(name)
-    #append the encoding and associated name to relevant lists
-    
+
 
 stream = cv2.VideoCapture(0)#init video stream through the bear's webcam
 
 
 #init variables for main loop
+
 real_face_locations = []
 real_face_encodings = [] #array used for facial encodings
 real_face_names = [] #array used to store names
 process_this_frame = True #variable used to select every other frame 
 
 while True:
+    #each iteration is a 'frame'
+    #every other is actually processed to save resources
 
     ret, frame = stream.read()#get a frame from video feed
 
@@ -94,6 +103,7 @@ while True:
             unknown_encoding = real_face_encodings[real_face_index]
             unknown_encoding = unknown_encoding.tolist()
             unknown(unknown_encoding, collection)
+            logged_face_encodings, logged_face_names = load_encodings(collection)
             continue
         else:
             send_location()
