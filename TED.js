@@ -3,7 +3,7 @@
 const {exec} = require("child_process");
 var SerialPort = require('serialport');
 try{
-    var port = new SerialPort("COM3", {baudRate:9600});
+    var port = new SerialPort("COM4", {baudRate:9600});
 }
 catch(err){
     console.log("ARDUINO NOT FOUND");
@@ -120,14 +120,18 @@ app.get('/',(req,res) => {
 //  POST
 
 app.post('/face',(req,res)=>{
-    console.log(req.body);
+    //console.log(req.body);
     data = req.body;
     var x = parseInt(data.x);
-    var y = parseInt(data.y);
     var w = parseInt(data.w);
-    var h = parseInt(data.h);
-    if (x > 320) turnRight(port);
-    if (x+w < 320) turnLeft(port);
+    if (x > 320) {
+        //console.log(x);
+        turnRight(port);
+    }
+    if (w < 320) {
+        //console.log(w)
+        turnLeft(port);
+    }
     //if face is off-center, send serial data to arduino to rotate stepper motor to rectify
 
     res.sendStatus(200)

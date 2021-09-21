@@ -5,6 +5,19 @@ from face_recognition.api import face_locations
 import numpy as np
 import os
 import pymongo
+import requests
+import datetime
+
+def postData(x, width):
+    url = "http://localhost:3000/face"
+    form = f"x={x}&w={width}".format(x,width)
+    headers = {
+    'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    res = requests.request("POST", url, headers=headers,data=form)
+
+def postData2(x,width):
+    pass
 
 def verify_friend(name):
     pass
@@ -40,9 +53,14 @@ client = pymongo.MongoClient("mongodb://localhost:27017/")#connect to the mongod
 db = client["Bear"]#select database
 collection = db["Bear_Friends"]#select collection (table) from the db
 
+gather = datetime.datetime.now()
 logged_face_encodings, logged_face_names = load_encodings(collection)
+gathered = datetime.datetime.now()
+
+delta = gathered - gather
 
 
+print("encodings collected in ["+str(round(delta.total_seconds()*1000,3))+ "]ms")
 
 stream = cv2.VideoCapture(0)#init video stream through the bear's webcam
 
@@ -66,11 +84,15 @@ while True:
     if process_this_frame: #process every other frame to save resources
 
         real_face_locations = face_recognition.face_locations(brg_resized_frame)
+        #get location data for each encoding
         real_face_encodings = face_recognition.face_encodings(brg_resized_frame,real_face_locations)
+        #get encoding data from each location
 
         real_face_names = []
-        for current_encoding in real_face_encodings:
+        # empty array to store live names
 
+        for current_encoding in real_face_encodings:
+            #iterates through each encoding found in the frame
             matches = face_recognition.compare_faces(logged_face_encodings, current_encoding,0.65)
             name = "Not Recognised"#default 'name' placeholder
 
@@ -88,17 +110,18 @@ while True:
     #process and format frame
     for (top,right,bottom,left), name in zip(real_face_locations, real_face_names):
             
-        #scale the processed image after facial detection has been run
+        #
+        # scale the processed image after facial detection has been run
         top *= 4
         right *= 4
         bottom *= 4
         left *= 4
+        #top,right,bottom,left *= 4
 
-
-        boxColour = (0, 255, 0)
+        boxColour = (0, 255, 0)#default box colour is green
         if name == "Not Recognised":
             print("UNKNOWN FACE DETECTED")
-            boxColour = (0, 0, 255)
+            boxColour = (0, 0, 255)#set to red
             real_face_index = real_face_names.index(name)
             unknown_encoding = real_face_encodings[real_face_index]
             unknown_encoding = unknown_encoding.tolist()
@@ -106,7 +129,7 @@ while True:
             logged_face_encodings, logged_face_names = load_encodings(collection)
             continue
         else:
-            send_location()
+            postData(left,right)
         
         #sketch box around located face
         cv2.rectangle(frame,(left-8,top-8),(right+8,bottom+8),boxColour,2)

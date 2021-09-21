@@ -61,7 +61,7 @@ int i;
 i=0;
 while(i<NUMBER_OF_STEPS_PER_REV){
 leftStep();
-rightStep();
+//rightStep();
 i++;
 }
 }
