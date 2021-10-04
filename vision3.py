@@ -9,7 +9,7 @@ import requests
 import datetime
 
 def postData(x, width):
-    url = "http://localhost:3000/face"
+    url = "http://127.0.0.1:3000/face"
     form = f"x={x}&w={width}".format(x,width)
     headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -49,7 +49,7 @@ def load_encodings(collection):
 
 
 
-client = pymongo.MongoClient("mongodb://localhost:27017/")#connect to the mongodb
+client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")#connect to the mongodb
 db = client["Bear"]#select database
 collection = db["Bear_Friends"]#select collection (table) from the db
 
