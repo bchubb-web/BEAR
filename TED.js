@@ -117,6 +117,12 @@ app.get('/',(req,res) => {
 });
 
 
+app.get('/',(req,res) => {
+    res.send()
+    res.sendStatus(200);
+});
+
+
 //  POST
 
 app.post('/face',(req,res)=>{

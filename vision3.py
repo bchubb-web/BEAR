@@ -22,7 +22,7 @@ def postData2(x,width):
 def verify_friend(name):
     pass
 
-def unknown(encoding, collection):
+async def unknown(encoding, collection):
     name = input("unrecognised face, please input full name: ")
     obj = {
         "name": name,
