@@ -83,7 +83,7 @@ while True:
 
     if process_this_frame: #process every other frame to save resources
 
-        real_face_locations = face_recognition.face_locations(brg_resized_frame)
+        real_face_locations = face_recognition.face_locations(brg_resized_frame, model="cnn")
         #get location data for each encoding
         real_face_encodings = face_recognition.face_encodings(brg_resized_frame,real_face_locations)
         #get encoding data from each location
@@ -109,19 +109,17 @@ while True:
 
     #process and format frame
     for (top,right,bottom,left), name in zip(real_face_locations, real_face_names):
-            
-        #
         # scale the processed image after facial detection has been run
         top *= 4
         right *= 4
         bottom *= 4
         left *= 4
-        #top,right,bottom,left *= 4
 
-        boxColour = (0, 255, 0)#default box colour is green
+        boxColour = (0, 255, 0)# default box colour is green
+
         if name == "Not Recognised":
             print("UNKNOWN FACE DETECTED")
-            boxColour = (0, 0, 255)#set to red
+            boxColour = (0, 0, 255)# set to red
             real_face_index = real_face_names.index(name)
             unknown_encoding = real_face_encodings[real_face_index]
             unknown_encoding = unknown_encoding.tolist()
