@@ -7,6 +7,8 @@ import os
 import pymongo
 import requests
 import datetime
+from numba import jit, cuda
+import timeit
 
 def postData(x, width):
     url = "http://127.0.0.1:3000/face"
@@ -33,6 +35,7 @@ async def unknown(encoding, collection):
 
 def send_location():
     pass
+
 
 def load_encodings(collection):
     logged_face_encodings = []
@@ -72,6 +75,8 @@ real_face_encodings = [] #array used for facial encodings
 real_face_names = [] #array used to store names
 process_this_frame = True #variable used to select every other frame 
 
+
+
 while True:
     #each iteration is a 'frame'
     #every other is actually processed to save resources
@@ -83,15 +88,17 @@ while True:
 
     if process_this_frame: #process every other frame to save resources
 
-        real_face_locations = face_recognition.face_locations(brg_resized_frame, model="cnn")
+        real_face_locations = face_recognition.face_locations(brg_resized_frame)
         #get location data for each encoding
         real_face_encodings = face_recognition.face_encodings(brg_resized_frame,real_face_locations)
         #get encoding data from each location
-
+        print(real_face_encodings)
         real_face_names = []
         # empty array to store live names
-
+        start = timeit.default_timer()
         for current_encoding in real_face_encodings:
+            end = timeit.default_timer()
+            print(end - start) 
             #iterates through each encoding found in the frame
             matches = face_recognition.compare_faces(logged_face_encodings, current_encoding,0.65)
             name = "Not Recognised"#default 'name' placeholder
@@ -103,6 +110,7 @@ while True:
                 #set the name placeholder to the encoding's related name
             
             real_face_names.append(name)
+        
             #add the name to local names within the loop
 
     process_this_frame = not process_this_frame #invert boolean to skip every other frame
@@ -127,6 +135,7 @@ while True:
             logged_face_encodings, logged_face_names = load_encodings(collection)
             continue
         else:
+            #pass
             postData(left,right)
         
         #sketch box around located face
