@@ -36,6 +36,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 var data = {};
 var status = 'Running';
 var speech = 'Hello World';
+var registered = [];
+
 
 function turnLeft(port){
     console.log("LEFT");
@@ -50,11 +52,12 @@ function turnRight(port){
 }
 
 function findFriend(MongoClient, url, name){
+    console.log("finding");
         //FUTURE FUNCTION TO FIND A FRIEND IN THE BEARS DATABASE
     MongoClient.connect(url,function(err,db){
         //connect to mongo
         if(err) throw err;
-        var dbo = db.db("BEAR");//find the correct db
+        var dbo = db.db("Bear");//find the correct db
         dbo.collection("Bear_Friends").find({},{projection:{name: name}//select the record within the friends collection that matches the name parameter given
         }).toArray(function(err,result){
             if(err) throw err;//    <<TODO>>    handle errors to return false, meaning the name given isnt found in the database
@@ -83,6 +86,39 @@ function addFriend(MongoClient,url, name, age, gender){
     });
 }
 
+function register(MongoClient, url, student, time){
+
+    MongoClient.connect(url, function(err, db){
+        if(err){return "DB Connect Failed"};
+        var dbo = db.db("Bear");
+        var stuQuery = {name: student};
+        
+        dbo.collection("Bear_Register").find(stuQuery,{projection:{_id: 0, name: 0}
+        }).toArray(function(err,result){
+            if(err){throw err};
+            console.log(result[0]);
+
+            var stuVal = { $set: {attending: !(result[0].attending), last: time}};
+            if (result[0].last < time){
+                dbo.collection("Bear_Register").updateOne(stuQuery, stuVal, function(err,res){
+                    if(err)throw err;
+                    console.log(student+" registered");
+                    registered.push(student);
+                });
+            }
+            else{
+                console.log("this student has signed in today");
+            }
+
+            db.close();
+        });
+
+        
+        
+    });
+}
+
+
 function returnFriends(MongoClient,url){
 
 
@@ -94,6 +130,8 @@ function returnFriends(MongoClient,url){
 app.set('views',path.join(__dirname+'/views'));
 app.set('view engine','pug');
 app.set('title', 'BEAR');
+
+
 
 
 //  GET 
@@ -130,17 +168,37 @@ app.post('/face',(req,res)=>{
     data = req.body;
     var x = parseInt(data.x);
     var w = parseInt(data.w);
+    var student = data.student;
+    var hour = data.time;
     if (x > 320) {
         //console.log(x);
-        turnRight(port);
+        //turnRight(port);
     }
     if (w < 320) {
         //console.log(w)
-        turnLeft(port);
+        //turnLeft(port);
+    }
+    if (x < 320 && w > 320){
+        if ( !(registered.includes(student))){
+            register(MongoClient,dbUrl,student, hour);
+            //console.log(registered);
+        }
+        else{
+            console.log(registered);
+        }
     }
     //if face is off-center, send serial data to arduino to rotate stepper motor to rectify
 
     res.sendStatus(200)
+});
+
+app.post('/register',(req,res)=>{
+    student = req.body.student;
+    hour = req.body.time;
+
+    register(MongoClient,dbUrl,student,hour);
+
+    
 });
 
 app.post('/speak',(req,res)=>{

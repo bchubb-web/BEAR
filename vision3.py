@@ -1,3 +1,4 @@
+from xml.dom.domreg import registered
 import face_recognition
 import cv2
 import asyncio
@@ -10,9 +11,25 @@ import datetime
 from numba import jit, cuda
 import timeit
 
-def postData(x, width):
+
+def update_face():
+    pass
+
+def Register(student):
+    time = datetime.datetime.now().hour
+    url = "http://127.0.0.1:3000/register"
+    form = f"student={student}&time={time}"
+    headers = {
+    'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    res = requests.request("POST", url, headers=headers,data=form)
+
+
+
+def postData(x, width, student):
+    time = datetime.datetime.now().hour
     url = "http://127.0.0.1:3000/face"
-    form = f"x={x}&w={width}".format(x,width)
+    form = f"x={x}&w={width}&student={student}&time={time}"
     headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
     }
@@ -32,6 +49,7 @@ async def unknown(encoding, collection):
     }
     #print(obj)
     x = collection.insert_one(obj)
+
 
 def send_location():
     pass
@@ -55,6 +73,10 @@ def load_encodings(collection):
 client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")#connect to the mongodb
 db = client["Bear"]#select database
 collection = db["Bear_Friends"]#select collection (table) from the db
+register = db["Bear_register"]# select the register collection from the db
+
+
+
 
 gather = datetime.datetime.now()
 logged_face_encodings, logged_face_names = load_encodings(collection)
@@ -75,7 +97,7 @@ real_face_encodings = [] #array used for facial encodings
 real_face_names = [] #array used to store names
 process_this_frame = True #variable used to select every other frame 
 
-
+registered = []
 
 while True:
     #each iteration is a 'frame'
@@ -92,7 +114,7 @@ while True:
         #get location data for each encoding
         real_face_encodings = face_recognition.face_encodings(brg_resized_frame,real_face_locations)
         #get encoding data from each location
-        print(real_face_encodings)
+        #print(real_face_encodings)
         real_face_names = []
         # empty array to store live names
         start = timeit.default_timer()
@@ -135,8 +157,8 @@ while True:
             logged_face_encodings, logged_face_names = load_encodings(collection)
             continue
         else:
-            #pass
-            postData(left,right)
+            print("face")
+            postData(left,right, name)
         
         #sketch box around located face
         cv2.rectangle(frame,(left-8,top-8),(right+8,bottom+8),boxColour,2)

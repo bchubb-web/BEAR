@@ -7,6 +7,7 @@ faceCascade = cv2.CascadeClassifier(cascPath)
 video_capture = cv2.VideoCapture(0)
 #start video capture
 
+
 def getStatus():
     status = requests.get('http://192.168.1.129:3000/data')
     return str(status)
