@@ -8,7 +8,6 @@ import os
 import pymongo
 import requests
 import datetime
-from numba import jit, cuda
 import timeit
 
 
