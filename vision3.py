@@ -54,7 +54,7 @@ async def unknown(encoding, collection):
 def send_location():
     pass
 
-
+ 
 def load_encodings(collection):
     logged_face_encodings = []
     logged_face_names = []
