@@ -26,8 +26,10 @@ def Register(student):
 
 
 def postData(x, width, student):
-    time = datetime.datetime.now().hour
+    time = datetime.datetime.now().strftime("%H:%M")
+    print(time)
     url = "http://127.0.0.1:3000/face"
+    
     form = f"x={x}&w={width}&student={student}&time={time}"
     headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -39,6 +41,7 @@ def postData2(x,width):
 
 def verify_friend(name):
     pass
+
 
 async def unknown(encoding, collection):
     name = input("unrecognised face, please input full name: ")

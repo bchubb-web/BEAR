@@ -90,27 +90,32 @@ function register(MongoClient, url, student, time){
 
     MongoClient.connect(url, function(err, db){
         if(err){return "DB Connect Failed"};
-        var dbo = db.db("Bear");
-        var stuQuery = {name: student};
+        var dbo = db.db("Bear");//correct db
+        var stuQuery = {name: student};//object with student name
         
-        dbo.collection("Bear_Register").find(stuQuery,{projection:{_id: 0, name: 0}
-        }).toArray(function(err,result){
+        dbo.collection("Bear_register").find(stuQuery,{projection:{_id: 0, name: 0}}).toArray(function(err,result){
+            //^^ accesses collection, finds the student and returns array of contents without _id or name
             if(err){throw err};
-            console.log(result[0]);
+            console.log(result[0]);//log the resultant object
 
-            var stuVal = { $set: {attending: !(result[0].attending), last: time}};
-            if (result[0].last < time){
-                dbo.collection("Bear_Register").updateOne(stuQuery, stuVal, function(err,res){
-                    if(err)throw err;
+            var stuVal = { $set: {attending: !(result[0].attending), last: time}}; // declare new values with iverted attending status
+            if(result[0].last < time){
+                if (!result[0].attending){// if last log in db is before this hour
                     console.log(student+" registered");
-                    registered.push(student);
+                }
+                else{
+                    console.log(student+" signed out");
+                }
+                dbo.collection("Bear_register").updateOne(stuQuery, stuVal, function(err,res){
+                    if(err)throw err;
+                    //registered.push(student);
                 });
             }
             else{
-                console.log("this student has signed in today");
+                console.log("this student has signed in today at: " + result[0].last+"it is currently: "+ time);
             }
 
-            db.close();
+            //db.close();
         });
 
         
