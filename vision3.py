@@ -29,6 +29,7 @@ def postData(x, width, student):
     time = datetime.datetime.now().strftime("%H:%M")
     print(time)
     url = "http://127.0.0.1:3000/face"
+    
     form = f"x={x}&w={width}&student={student}&time={time}"
     headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
