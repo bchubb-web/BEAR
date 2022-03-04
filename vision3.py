@@ -5,43 +5,58 @@ import asyncio
 from face_recognition.api import face_locations
 import numpy as np
 import os
+from time import sleep
+import tkinter as tk
 import pymongo
 import requests
 import datetime
 import timeit
 
 
-def update_face():
-    pass
-
-def Register(student):
-    time = datetime.datetime.now().hour
-    url = "http://127.0.0.1:3000/register"
-    form = f"student={student}&time={time}"
-    headers = {
-    'Content-Type': 'application/x-www-form-urlencoded'
-    }
-    res = requests.request("POST", url, headers=headers,data=form)
-
-
+def btn(press):
+    print(press)
 
 def postData(x, width, student):
-    time = datetime.datetime.now().strftime("%H:%M")
+    '''global formTEXT
+    if formTEXT == "":
+        window = tk.Tk()
+
+        sign_in = tk.Button(text= "sign in",
+            width = 32,
+            bg = "white",fg = "green",
+            command = lambda formTEXT="signIn":btn(formTEXT))
+        sign_in.pack()
+
+        sign_out = tk.Button(text= "sign out",
+            width = 32,
+            bg = "white",fg = "red",
+            command = lambda formTEXT="signOut":btn(formTEXT))
+        sign_out.pack()
+        
+        submit = tk.Button(window, text="submit",
+        width=32,
+        bg = "white", fg = "black",
+        command = window.destroy)
+        submit.pack()
+
+        window.mainloop()
+    print(">"+formTEXT)
+    if formTEXT != "":
+        window.destroy()'''
+    time = datetime.datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
     print(time)
     url = "http://127.0.0.1:3000/face"
-    
-    form = f"x={x}&w={width}&student={student}&time={time}"
+    data = ""
+    while data != "in" and data != "out":
+        data = input("are you signing 'in' or 'out'")
+        print(data)
+    form = f"x={x}&w={width}&student={student}&time={time}&data={data}"
     headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
     }
     res = requests.request("POST", url, headers=headers,data=form)
-
-def postData2(x,width):
-    pass
-
-def verify_friend(name):
-    pass
-
+    print("next student")
+    sleep(5)
 
 
 async def unknown(encoding, collection):
@@ -53,11 +68,6 @@ async def unknown(encoding, collection):
     #print(obj)
     x = collection.insert_one(obj)
 
-
-def send_location():
-    pass
-
- 
 def load_encodings(collection):
     logged_face_encodings = []
     logged_face_names = []
@@ -78,7 +88,7 @@ db = client["Bear"]#select database
 collection = db["Bear_Friends"]#select collection (table) from the db
 register = db["Bear_register"]# select the register collection from the db
 
-
+formTEXT = ""
 
 
 gather = datetime.datetime.now()

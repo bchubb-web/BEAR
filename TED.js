@@ -86,7 +86,7 @@ function addFriend(MongoClient,url, name, age, gender){
     });
 }
 
-function register(MongoClient, url, student, time){
+function register(MongoClient, url, student, time, data){
 
     MongoClient.connect(url, function(err, db){
         if(err){return "DB Connect Failed"};
@@ -96,15 +96,15 @@ function register(MongoClient, url, student, time){
         dbo.collection("Bear_register").find(stuQuery,{projection:{_id: 0, name: 0}}).toArray(function(err,result){
             //^^ accesses collection, finds the student and returns array of contents without _id or name
             if(err){throw err};
-            console.log(result[0]);//log the resultant object
+            //console.log(result[0]);//log the resultant object
 
-            var stuVal = { $set: {attending: !(result[0].attending), last: time}}; // declare new values with iverted attending status
+            var stuVal = { $set: {attending: data, last: time}}; // declare new values with iverted attending status
             if(result[0].last < time){
-                if (!result[0].attending){// if last log in db is before this hour
-                    console.log(student+" registered");
+                if (data == "in"){// if last log in db is before this hour
+                    console.log(student+" registered at: "+ time);
                 }
-                else{
-                    console.log(student+" signed out");
+                else if (data == "out"){
+                    console.log(student+" signed out at: "+time);
                 }
                 dbo.collection("Bear_register").updateOne(stuQuery, stuVal, function(err,res){
                     if(err)throw err;
@@ -175,6 +175,7 @@ app.post('/face',(req,res)=>{
     var w = parseInt(data.w);
     var student = data.student;
     var hour = data.time;
+    var data = data.data;
     if (x > 320) {
         //console.log(x);
         //turnRight(port);
@@ -185,11 +186,11 @@ app.post('/face',(req,res)=>{
     }
     if (x < 320 && w > 320){
         if ( !(registered.includes(student))){
-            register(MongoClient,dbUrl,student, hour);
+            register(MongoClient,dbUrl,student, hour,data);
             //console.log(registered);
         }
         else{
-            console.log(registered);
+            console.log("other result in POST");
         }
     }
     //if face is off-center, send serial data to arduino to rotate stepper motor to rectify
