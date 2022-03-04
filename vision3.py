@@ -43,6 +43,7 @@ def verify_friend(name):
     pass
 
 
+
 async def unknown(encoding, collection):
     name = input("unrecognised face, please input full name: ")
     obj = {

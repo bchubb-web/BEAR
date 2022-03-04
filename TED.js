@@ -112,7 +112,7 @@ function register(MongoClient, url, student, time){
                 });
             }
             else{
-                console.log("this student has signed in today at: " + result[0].last+"it is currently: "+ time);
+                console.log("this student has signed in today at: " + result[0].last+"\nit is currently: "+ time);
             }
 
             //db.close();
@@ -145,7 +145,7 @@ app.get('/',(req,res) => {
     //send head of page
     MongoClient.connect(dbUrl,{useUnifiedTopology: true}, function(err,db){//connect to MONGO
         if (err) throw err;//if any errors then return them
-        var dbo = db.db("BEAR");//sepecify the database we want
+        var dbo = db.db("Bear");//sepecify the database we want
 
         dbo.collection("Bear_Friends").find({}).toArray(function(err,result){//find collection and return all documents to an array
             if (err) throw err;
