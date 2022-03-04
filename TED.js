@@ -1,5 +1,9 @@
 //MODULES USED
-
+const readline = require('readline');
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
 const {exec} = require("child_process");
 var SerialPort = require('serialport');
 try{
@@ -97,13 +101,20 @@ function register(MongoClient, url, student, time, data){
             //^^ accesses collection, finds the student and returns array of contents without _id or name
             if(err){throw err};
             //console.log(result[0]);//log the resultant object
-
-            var stuVal = { $set: {attending: data, last: time}}; // declare new values with iverted attending status
+             answer = rl.question(`is ${student} signing IN or OUT`, function (answer) {
+                console.log(`signing ${student} ${answer} now...`);
+                return answer;
+                rl.close();
+              });
+            var stuVal = { $set: {attending: answer, last: time}}; // declare new values with iverted attending status
             if(result[0].last < time){
-                if (data == "in"){// if last log in db is before this hour
+
+                
+
+                if (answer == "IN"){// if last log in db is before this hour
                     console.log(student+" registered at: "+ time);
                 }
-                else if (data == "out"){
+                else if (data == "OUT"){
                     console.log(student+" signed out at: "+time);
                 }
                 dbo.collection("Bear_register").updateOne(stuQuery, stuVal, function(err,res){
@@ -196,20 +207,6 @@ app.post('/face',(req,res)=>{
     //if face is off-center, send serial data to arduino to rotate stepper motor to rectify
 
     res.sendStatus(200)
-});
-
-app.post('/register',(req,res)=>{
-    student = req.body.student;
-    hour = req.body.time;
-
-    register(MongoClient,dbUrl,student,hour);
-
-    
-});
-
-app.post('/speak',(req,res)=>{
-     speech = req.body.text;//take the posted data and store it to the speach variable
-     console.log(speech);
 });
 
 app.post('/friend',(req,res)=>{

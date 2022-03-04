@@ -17,39 +17,14 @@ def btn(press):
     print(press)
 
 def postData(x, width, student):
-    '''global formTEXT
-    if formTEXT == "":
-        window = tk.Tk()
-
-        sign_in = tk.Button(text= "sign in",
-            width = 32,
-            bg = "white",fg = "green",
-            command = lambda formTEXT="signIn":btn(formTEXT))
-        sign_in.pack()
-
-        sign_out = tk.Button(text= "sign out",
-            width = 32,
-            bg = "white",fg = "red",
-            command = lambda formTEXT="signOut":btn(formTEXT))
-        sign_out.pack()
-        
-        submit = tk.Button(window, text="submit",
-        width=32,
-        bg = "white", fg = "black",
-        command = window.destroy)
-        submit.pack()
-
-        window.mainloop()
-    print(">"+formTEXT)
-    if formTEXT != "":
-        window.destroy()'''
+    
     time = datetime.datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
     print(time)
     url = "http://127.0.0.1:3000/face"
     data = ""
-    while data != "in" and data != "out":
-        data = input("are you signing 'in' or 'out'")
-        print(data)
+    #while data != "in" and data != "out":
+     #   data = input("are you signing 'in' or 'out'")
+      #  print(data)
     form = f"x={x}&w={width}&student={student}&time={time}&data={data}"
     headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -121,7 +96,7 @@ while True:
     resized_frame = cv2.resize(frame,(0,0),fx = 0.25, fy=0.25)#resize to 1/4 for faster processing
     brg_resized_frame = resized_frame[:,:,::-1]#convert to the format used by opencv
 
-    if process_this_frame: #process every other frame to save resources
+    if process_this_frame:  #process every other frame to save resources
 
         real_face_locations = face_recognition.face_locations(brg_resized_frame)
         #get location data for each encoding
@@ -148,7 +123,7 @@ while True:
         
             #add the name to local names within the loop
 
-    process_this_frame = not process_this_frame #invert boolean to skip every other frame
+    #process_this_frame = not process_this_frame #invert boolean to skip every other frame
 
     #process and format frame
     for (top,right,bottom,left), name in zip(real_face_locations, real_face_names):
@@ -159,6 +134,9 @@ while True:
         left *= 4
 
         boxColour = (0, 255, 0)# default box colour is green
+
+                #sketch box around located face
+
 
         if name == "Not Recognised":
             print("UNKNOWN FACE DETECTED")
@@ -173,7 +151,6 @@ while True:
             print("face")
             postData(left,right, name)
         
-        #sketch box around located face
         cv2.rectangle(frame,(left-8,top-8),(right+8,bottom+8),boxColour,2)
         #sketch rectangle for facial identifier
         cv2.rectangle(frame,(left,bottom-32),(right,bottom),boxColour,cv2.FILLED)
