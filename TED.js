@@ -24,6 +24,7 @@ const dbUrl = "mongodb://localhost:27017/";
 
 const path = require("path");
 const file = require("fs");
+const { CLIENT_RENEG_WINDOW } = require('tls');
 
 
 //  INIT EXPRESS FOLDERS
@@ -40,8 +41,23 @@ app.use(bodyParser.urlencoded({extended: true}));
 var data = {};
 var status = 'Running';
 var speech = 'Hello World';
-var registered = [];
+global.reg_in = [];
+global.entry = "";
+global.leave = "";
 
+MongoClient.connect(dbUrl, function(err,db){
+    if(err){throw err};
+    db.collection("Bear_Setings").find().toArray(function(err, result){
+        entry = result.entry;
+        leave = result.leave;
+    });
+});
+
+/*function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }*/
 
 function turnLeft(port){
     console.log("LEFT");
@@ -91,55 +107,32 @@ function addFriend(MongoClient,url, name, age, gender){
 }
 
 function register(MongoClient, url, student, time, data){
-
-    MongoClient.connect(url, function(err, db){
-        if(err){return "DB Connect Failed"};
-        var dbo = db.db("Bear");//correct db
-        var stuQuery = {name: student};//object with student name
-        
-        dbo.collection("Bear_register").find(stuQuery,{projection:{_id: 0, name: 0}}).toArray(function(err,result){
-            //^^ accesses collection, finds the student and returns array of contents without _id or name
+    var today = new Date()
+    var curHr = today.getHours()
+    MongoClient.connect(url, function(err,db){
+        if(err){return"DB CONNECT FAILED"};
+        var dbo = db.db("Bear");
+        var query = {name: student};
+        dbo.collection("Bear_register").find(query,{projection:{_id:0,name:0}}).toArray(function(err,result){
             if(err){throw err};
-            //console.log(result[0]);//log the resultant object
-             answer = rl.question(`is ${student} signing IN or OUT`, function (answer) {
-                console.log(`signing ${student} ${answer} now...`);
-                return answer;
-                rl.close();
-              });
-            var stuVal = { $set: {attending: answer, last: time}}; // declare new values with iverted attending status
-            if(result[0].last < time){
+            if(!reg_in.includes(student)){
+                reg_in.push(student)
+                console.log(`registering ${student}...`);
+                var stuVal = { $set: {attending: "IN", last: time}}; // declare new values with iverted attending status
+                if(result[0].last < time){
+                        dbo.collection("Bear_register").updateOne(query, stuVal, function(err,res){
+                            if(err)throw err;
+                            console.log(student+" registered at: "+ time);
 
-                
-
-                if (answer == "IN"){// if last log in db is before this hour
-                    console.log(student+" registered at: "+ time);
+                        });
                 }
-                else if (data == "OUT"){
-                    console.log(student+" signed out at: "+time);
-                }
-                dbo.collection("Bear_register").updateOne(stuQuery, stuVal, function(err,res){
-                    if(err)throw err;
-                    //registered.push(student);
-                });
             }
-            else{
-                console.log("this student has signed in today at: " + result[0].last+"\nit is currently: "+ time);
+            else if(curHrs > leave){
+                console.log("student currently registered. please try again later");
             }
-
-            //db.close();
         });
-
-        
-        
     });
 }
-
-
-function returnFriends(MongoClient,url){
-
-
-}
-
 
 //  SET
 
@@ -196,13 +189,10 @@ app.post('/face',(req,res)=>{
         //turnLeft(port);
     }
     if (x < 320 && w > 320){
-        if ( !(registered.includes(student))){
-            register(MongoClient,dbUrl,student, hour,data);
+        register(MongoClient,dbUrl,student, hour,data);
+        
             //console.log(registered);
-        }
-        else{
-            console.log("other result in POST");
-        }
+
     }
     //if face is off-center, send serial data to arduino to rotate stepper motor to rectify
 

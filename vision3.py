@@ -19,7 +19,7 @@ def btn(press):
 def postData(x, width, student):
     
     time = datetime.datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
-    print(time)
+    #print(time)
     url = "http://127.0.0.1:3000/face"
     data = ""
     #while data != "in" and data != "out":
@@ -30,8 +30,7 @@ def postData(x, width, student):
     'Content-Type': 'application/x-www-form-urlencoded'
     }
     res = requests.request("POST", url, headers=headers,data=form)
-    print("next student")
-    sleep(5)
+    #print("next student")
 
 
 async def unknown(encoding, collection):
@@ -108,7 +107,7 @@ while True:
         start = timeit.default_timer()
         for current_encoding in real_face_encodings:
             end = timeit.default_timer()
-            print(end - start) 
+            #print(end - start) 
             #iterates through each encoding found in the frame
             matches = face_recognition.compare_faces(logged_face_encodings, current_encoding,0.65)
             name = "Not Recognised"#default 'name' placeholder
@@ -148,7 +147,7 @@ while True:
             logged_face_encodings, logged_face_names = load_encodings(collection)
             continue
         else:
-            print("face")
+            #print("face")
             postData(left,right, name)
         
         cv2.rectangle(frame,(left-8,top-8),(right+8,bottom+8),boxColour,2)
