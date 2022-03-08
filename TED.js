@@ -44,14 +44,14 @@ var speech = 'Hello World';
 global.reg_in = [];
 global.entry = "";
 global.leave = "";
-
+/*
 MongoClient.connect(dbUrl, function(err,db){
     if(err){throw err};
     db.collection("Bear_Setings").find().toArray(function(err, result){
         entry = result.entry;
         leave = result.leave;
     });
-});
+});*/
 
 /*function sleep(ms) {
     return new Promise((resolve) => {
@@ -63,6 +63,32 @@ function turnLeft(port){
     console.log("LEFT");
     //SENDS SERIAL DATA TO ARDUINO FOR A LEFT TURN
     port.write('6',function(err){if(err)throw err;});
+}
+
+function get_attending(MongoClient, url){
+    MongoClient.connect(url, function(err,db){
+        if(err){throw err};
+        var dbo = db.db("Bear");
+        var query = {main: "THIS"};
+        dbo.collection("Bear_Settings").find(query,{projection:{attending_val:1}}).toArray(function(err,result){
+            if(err){throw err};
+            return result[0];
+        });
+    });
+}
+
+
+function update_attending(MongoClient, url, data){
+    MongoClient.connect(url,function(err,db){
+        if(err){throw err}
+        var dbo = db.db("Bear");
+        var query = {main: "THIS"};
+        var new_values = {$set: {attending_val: data}};
+        dbo.collection("Bear_Settings").updateOne(query, new_values, function(err, res){
+            if(err){throw err};
+            console.log(`students will now be registered: ${data}`);
+        });
+    });
 }
 
 function turnRight(port){
@@ -115,21 +141,18 @@ function register(MongoClient, url, student, time, data){
         var query = {name: student};
         dbo.collection("Bear_register").find(query,{projection:{_id:0,name:0}}).toArray(function(err,result){
             if(err){throw err};
-            if(!reg_in.includes(student)){
-                reg_in.push(student)
+            if 
                 console.log(`registering ${student}...`);
-                var stuVal = { $set: {attending: "IN", last: time}}; // declare new values with iverted attending status
+                register_val = get_attending(MongoClient, url);
+                var stuVal = { $set: {attending: register_val, last: time}}; // declare new values with iverted attending status
                 if(result[0].last < time){
-                        dbo.collection("Bear_register").updateOne(query, stuVal, function(err,res){
-                            if(err)throw err;
-                            console.log(student+" registered at: "+ time);
+                    dbo.collection("Bear_register").updateOne(query, stuVal, function(err,res){
+                        if(err)throw err;
+                        console.log(student+" registered at: "+ time);
 
-                        });
+                    });
                 }
-            }
-            else if(curHrs > leave){
-                console.log("student currently registered. please try again later");
-            }
+            
         });
     });
 }
@@ -190,13 +213,17 @@ app.post('/face',(req,res)=>{
     }
     if (x < 320 && w > 320){
         register(MongoClient,dbUrl,student, hour,data);
-        
-            //console.log(registered);
-
     }
     //if face is off-center, send serial data to arduino to rotate stepper motor to rectify
 
     res.sendStatus(200)
+});
+
+app.post('/ATTENTION', (req,res)=>{
+    var request = req.body;
+    var attention = request.BUTTON;
+    update_attending(MongoClient,dbUrl, attention);
+    return res.redirect("/");
 });
 
 app.post('/friend',(req,res)=>{
@@ -205,10 +232,7 @@ app.post('/friend',(req,res)=>{
     var name = data.name;
     var gender = data.gender;
 
-    //store all the posted data to variables
-
     status = addFriend(MongoClient,dbUrl,name,age,gender);
-
     res.sendStatus(200);
 });
 

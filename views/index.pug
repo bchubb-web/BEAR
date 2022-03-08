@@ -9,7 +9,7 @@ header
   .header-icon
     img(src='public/images/teddy-bear.svg' alt='bear')
     h1 The Bear
-  h3.header-sub Automated Student Register
+  h3.header-sub Functional Automated Registration Technology System (farts)
   p.header-min designed and built by Billy Chubb
 main
   section.sect-col.col-left
@@ -29,4 +29,12 @@ main
       div
         input(type='text' name='text' placeholder='TYPE:')
         button(type='submit') Say
+br
+section.sect-col 
+  h2 Are students signing IN or Out?
+
+  form.bear-form(action='/ATTENTION' method='post')
+    div
+      button(name="BUTTON" value="IN") IN
+      button(name="BUTTON" value="OUT") OUT
 script(src='public/js/scripts.js')

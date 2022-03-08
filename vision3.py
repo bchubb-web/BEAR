@@ -1,20 +1,14 @@
 from xml.dom.domreg import registered
 import face_recognition
 import cv2
-import asyncio
 from face_recognition.api import face_locations
 import numpy as np
-import os
 from time import sleep
 import tkinter as tk
 import pymongo
 import requests
 import datetime
 import timeit
-
-
-def btn(press):
-    print(press)
 
 def postData(x, width, student):
     
@@ -30,10 +24,10 @@ def postData(x, width, student):
     'Content-Type': 'application/x-www-form-urlencoded'
     }
     res = requests.request("POST", url, headers=headers,data=form)
-    #print("next student")
 
 
-async def unknown(encoding, collection):
+
+def unknown(encoding, collection):
     name = input("unrecognised face, please input full name: ")
     obj = {
         "name": name,
@@ -68,10 +62,7 @@ formTEXT = ""
 gather = datetime.datetime.now()
 logged_face_encodings, logged_face_names = load_encodings(collection)
 gathered = datetime.datetime.now()
-
 delta = gathered - gather
-
-
 print("encodings collected in ["+str(round(delta.total_seconds()*1000,3))+ "]ms")
 
 stream = cv2.VideoCapture(0)#init video stream through the bear's webcam
@@ -109,7 +100,7 @@ while True:
             end = timeit.default_timer()
             #print(end - start) 
             #iterates through each encoding found in the frame
-            matches = face_recognition.compare_faces(logged_face_encodings, current_encoding,0.65)
+            matches = face_recognition.compare_faces(logged_face_encodings, current_encoding,0.75)
             name = "Not Recognised"#default 'name' placeholder
 
             real_face_distances = face_recognition.face_distance(logged_face_encodings,current_encoding)
