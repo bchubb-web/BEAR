@@ -36,6 +36,7 @@ def unknown(encoding, collection):
     #print(obj)
     x = collection.insert_one(obj)
 
+
 def load_encodings(collection):
     logged_face_encodings = []
     logged_face_names = []

@@ -44,25 +44,16 @@ var speech = 'Hello World';
 global.reg_in = [];
 global.entry = "";
 global.leave = "";
-/*
-MongoClient.connect(dbUrl, function(err,db){
-    if(err){throw err};
-    db.collection("Bear_Setings").find().toArray(function(err, result){
-        entry = result.entry;
-        leave = result.leave;
-    });
-});*/
-
-/*function sleep(ms) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  }*/
 
 function turnLeft(port){
     console.log("LEFT");
     //SENDS SERIAL DATA TO ARDUINO FOR A LEFT TURN
     port.write('6',function(err){if(err)throw err;});
+}
+function turnRight(port){
+    console.log("RIGHT");
+    //SENDS SERIAL DATA TO ARDUINO FOR A RIGHT TURN
+    port.write('9',function(err){if(err)throw err;});
 }
 
 function get_attending(MongoClient, url){
@@ -77,7 +68,6 @@ function get_attending(MongoClient, url){
     });
 }
 
-
 function update_attending(MongoClient, url, data){
     MongoClient.connect(url,function(err,db){
         if(err){throw err}
@@ -89,12 +79,6 @@ function update_attending(MongoClient, url, data){
             console.log(`students will now be registered: ${data}`);
         });
     });
-}
-
-function turnRight(port){
-    console.log("RIGHT");
-    //SENDS SERIAL DATA TO ARDUINO FOR A RIGHT TURN
-    port.write('9',function(err){if(err)throw err;});
 }
 
 function findFriend(MongoClient, url, name){
@@ -141,7 +125,8 @@ function register(MongoClient, url, student, time, data){
         var query = {name: student};
         dbo.collection("Bear_register").find(query,{projection:{_id:0,name:0}}).toArray(function(err,result){
             if(err){throw err};
-            if 
+            if(!reg_in.includes(student)){
+                reg_in.push(student);
                 console.log(`registering ${student}...`);
                 register_val = get_attending(MongoClient, url);
                 var stuVal = { $set: {attending: register_val, last: time}}; // declare new values with iverted attending status
@@ -149,10 +134,9 @@ function register(MongoClient, url, student, time, data){
                     dbo.collection("Bear_register").updateOne(query, stuVal, function(err,res){
                         if(err)throw err;
                         console.log(student+" registered at: "+ time);
-
                     });
                 }
-            
+            }
         });
     });
 }
