@@ -123,3 +123,11 @@ main{
     border-radius: 8px;
     margin-top: 1rem;
 }
+
+#in{
+    background-color: #00ff00;
+}
+
+#out{
+    background-color: #ff0000;
+}

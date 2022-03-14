@@ -57,15 +57,21 @@ function turnRight(port){
 }
 
 function get_attending(MongoClient, url){
+    var value = "";
     MongoClient.connect(url, function(err,db){
         if(err){throw err};
         var dbo = db.db("Bear");
-        var query = {main: "THIS"};
-        dbo.collection("Bear_Settings").find(query,{projection:{attending_val:1}}).toArray(function(err,result){
+        var attend_query = {main: "THIS"};
+        dbo.collection("Bear_Settings").find(attend_query,{projection:{attending_val:1}}).toArray(function(err,result){
             if(err){throw err};
-            return result[0];
+            console.log(result[0]["attending_val"]);
+            value =  result[0]["attending_val"];
         });
     });
+    while(value == ""){
+        console.log("waiting");
+    }
+    return value;
 }
 
 function update_attending(MongoClient, url, data){
@@ -77,6 +83,7 @@ function update_attending(MongoClient, url, data){
         dbo.collection("Bear_Settings").updateOne(query, new_values, function(err, res){
             if(err){throw err};
             console.log(`students will now be registered: ${data}`);
+            reg_in = [];
         });
     });
 }
@@ -128,14 +135,21 @@ function register(MongoClient, url, student, time, data){
             if(!reg_in.includes(student)){
                 reg_in.push(student);
                 console.log(`registering ${student}...`);
-                register_val = get_attending(MongoClient, url);
-                var stuVal = { $set: {attending: register_val, last: time}}; // declare new values with iverted attending status
-                if(result[0].last < time){
-                    dbo.collection("Bear_register").updateOne(query, stuVal, function(err,res){
-                        if(err)throw err;
-                        console.log(student+" registered at: "+ time);
-                    });
-                }
+                var attend_query = {main: "THIS"};
+                dbo.collection("Bear_Settings").find(attend_query,{projection:{attending_val:1}}).toArray(function(err,settings){
+                    if(err){throw err};
+                    console.log(">>>"+settings[0]["attending_val"]);
+                    var register_val =  settings[0]["attending_val"];
+                    var stuVal = { $set: {attending: register_val, last: time}}; // declare new values with iverted attending status
+                    if(result[0].last < time){
+                        console.log(stuVal);
+                        dbo.collection("Bear_register").updateOne(query, stuVal, function(err,res){
+                            if(err){throw err};
+                            console.log(student+" registered at: "+ time);
+                        });
+                    }
+                });
+                
             }
         });
     });
@@ -221,4 +235,4 @@ app.post('/friend',(req,res)=>{
 });
 
 //  INIT server on port 3000
-app.listen(3000,console.log('TED active'));
+app.listen(3000,console.log('BEAR active'));

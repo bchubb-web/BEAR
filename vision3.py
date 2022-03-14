@@ -37,6 +37,7 @@ def unknown(encoding, collection):
     x = collection.insert_one(obj)
 
 
+
 def load_encodings(collection):
     logged_face_encodings = []
     logged_face_names = []
@@ -59,6 +60,8 @@ register = db["Bear_register"]# select the register collection from the db
 
 formTEXT = ""
 
+for document in db["Bear_Settings"].find():
+    name = document
 
 gather = datetime.datetime.now()
 logged_face_encodings, logged_face_names = load_encodings(collection)
