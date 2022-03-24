@@ -175,7 +175,7 @@ app.get('/',(req,res) => {
         dbo.collection("Bear_Friends").find({}).toArray(function(err,result){//find collection and return all documents to an array
             if (err) throw err;
             var friends = [];
-            for(var i = 0; i<result.length;i++) friends.push("> "+result[i]['name']);
+            for(var i = 0; i<result.length;i++)if(!friends.includes("> "+result[i]['name'])){ friends.push("> "+result[i]['name']); console.log(result[i]['name']);console.log(friends)};
             db.close();
             res.render('index',{
                 friends: friends
@@ -188,6 +188,19 @@ app.get('/',(req,res) => {
 app.get('/',(req,res) => {
     res.send()
     res.sendStatus(200);
+});
+
+app.get('/register', (req,res) => {
+    MongoClient.connect(dbUrl,{useUnifiedTopology:true}, function(err,db){
+        if(err)throw err;
+        var dbo = db.db("Bear");
+        dbo.collection("Bear_register").find({}).toArray(function(err,result){
+            if(err) throw err;
+            console.log(result);
+            res.render('register',{students: result});
+            db.close();
+        });
+    });
 });
 
 

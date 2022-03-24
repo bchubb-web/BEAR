@@ -1,0 +1,34 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='public/styles/style.css')
+    title Register
+  body
+    header
+      .header-icon
+        img(src='public/images/teddy-bear.svg', alt='bear')
+        h1 The Bear
+      h3.header-sub Automated Registration System (ARS)
+      p.header-min designed and built by Billy Chubb
+    main
+      section.sect-col.col-left.reg-main
+        table.reg-table
+          tbody
+            tr
+              //th PID
+              th Student
+              th Last Sign
+              th Status
+            each val, index in students
+                tr
+                //td.pid= students[index].friend-id
+                td.name= students[index].name
+                td.sign= students[index].last
+                if students[index].attending == "IN"
+                    td.status#in= students[index].attending
+                else 
+                    td.status#out= students[index].attending
+      section.sect-col.col-right.reg-side

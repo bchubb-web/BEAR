@@ -131,3 +131,39 @@ main{
 #out{
     background-color: #ff0000;
 }
+
+.in{
+    color: #00FF00;
+}
+
+.out{
+    color:#ff0000;
+}
+
+.status{
+    color: #fdfdfd;
+    font-weight: 700;
+    text-align: center;
+}
+
+.reg-main{
+    flex-basis: 70%;
+}
+
+.reg-side{
+    flex-basis: 30%;
+}
+
+.reg-table,td,th{
+    border: 1px solid #2e2e2e;
+    border-collapse: collapse;
+}
+
+.reg-table{
+    width: 100%;
+    font-size: small;
+}
+
+.sign{
+    font-size: x-small;
+}
