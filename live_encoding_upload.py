@@ -24,7 +24,6 @@ def addToDB(encoding):
     pid = "0"+name_split[0][0]+name_split[0][-1]+name_split[1][0]+name_split[1][-1]+"0"+yob[-2:]
     friend_obj = {
         "name":name,
-        "encoding":encoding,
         "PID": pid,
         "position":"student",
         "YOB": yob
@@ -34,6 +33,10 @@ def addToDB(encoding):
         "PID": pid,
         "attending": "NULL",
         "last": "NULL"
+    }
+    encoding_obj = {
+        "PID": pid,
+        "encoding": encoding
     }
     
 
