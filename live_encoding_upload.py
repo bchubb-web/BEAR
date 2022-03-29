@@ -14,10 +14,14 @@ stream = cv2.VideoCapture(0)
 
 client = pymongo.MongoClient()
 db = client["Bear"]
-friends = db["Bear_Friends"]
-register = db["Bear_register"]
 
-def addToDB(encoding):
+
+
+
+def addToDB(encoding, db):
+    friends = db["Bear_Friends"]
+    register = db["Bear_register"]
+    encodings = db["Bear_Encodings"]
     name = input("enter the students firstname and lastname in the form 'first last' in all lowercase")
     yob = input("enter the students birth year in the form '20xx': ")
     name_split = name.split() 
@@ -38,7 +42,9 @@ def addToDB(encoding):
         "PID": pid,
         "encoding": encoding
     }
-    
+    x = friends.insert_one(friend_obj)
+    y = register.insert_one(reg_obj)
+    z = encodings.insert_one(encoding_obj)
 
 while True:
     ret, frame = stream.read()

@@ -123,7 +123,7 @@ function addFriend(MongoClient,url, name, age, gender){
     });
 }
 
-function register(MongoClient, url, student, time, data){
+function register(MongoClient, url, student, time){
     var today = new Date()
     var curHr = today.getHours()
     MongoClient.connect(url, function(err,db){
@@ -213,7 +213,6 @@ app.post('/face',(req,res)=>{
     var w = parseInt(data.w);
     var student = data.student;
     var hour = data.time;
-    var data = data.data;
     if (x > 320) {
         //console.log(x);
         //turnRight(port);
@@ -223,7 +222,7 @@ app.post('/face',(req,res)=>{
         //turnLeft(port);
     }
     if (x < 320 && w > 320){
-        register(MongoClient,dbUrl,student, hour,data);
+        register(MongoClient,dbUrl,student, hour);
     }
     //if face is off-center, send serial data to arduino to rotate stepper motor to rectify
 
