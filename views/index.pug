@@ -11,10 +11,16 @@ header
     h1 The Bear
   h3.header-sub Automated Registration System (ARS)
   p.header-min designed and built by Billy Chubb
+
+
 main
-  section.sect-col.col-left
-    h2 Read through the creation process
-    a(href='../public/files/DOCS.docx' download='') CLICK
+  section.sect-col.col-left 
+    h2 Are students signing IN or Out?
+
+    form(action='/ATTENTION' method='post' id="reg")
+    
+      button(name="BUTTON" value="IN" id="in") IN
+      button(name="BUTTON" value="OUT" id="out") OUT
   section.sect-col.col-mid
     h2 The Bear's friends:
     .friends-cont
@@ -29,12 +35,5 @@ main
       div
         input(type='text' name='text' placeholder='TYPE:')
         button(type='submit') Say
-br
-section.sect-col 
-  h2 Are students signing IN or Out?
 
-  form.bear-form(action='/ATTENTION' method='post')
-    div
-      button(name="BUTTON" value="IN" id="in") IN
-      button(name="BUTTON" value="OUT" id="out") OUT
 script(src='public/js/scripts.js')

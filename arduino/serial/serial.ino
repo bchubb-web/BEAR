@@ -85,7 +85,7 @@ void loop() {
       case '9':
         rightStep();
         break;
-     }
+     
      case '6':
         leftStep();
         break;
@@ -96,6 +96,7 @@ void loop() {
         //delay 1 microsecond
         delay(2);
         break;
+     }
     if (data == '6'){
       //if the data is the code for left
       Serial.println("left<<");

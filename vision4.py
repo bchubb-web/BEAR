@@ -12,26 +12,34 @@ import timeit
 def post2server(x,w,student):
     time = datetime.datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
     url = "http://127.0.0.1:3000/face"
-    form = f"x={x}&w={w}&student={student}"
+    form = f"x={x}&w={w}&student={student}&time={time}"
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     res = requests.request("POST", url,headers=headers,data=form)
 
-def load_encodings(collection):
-    logged_face_encodings = []
-    logged_face_names = []
-    for document in collection.find():#look through each document
+def load_encodings(db):
+    student_encodings = []
+    student_names = []
+    student_PID = []
+    for document in db["Bear_Friends"].find():
+        pid = document["PID"]
         name = document["name"]
-        encoding = document["encoding"]
-        logged_face_encodings.append(np.array(encoding))
-        if name not in logged_face_names:
-            print(f"encoding gathered from DB ~ [{name}]")
-        logged_face_names.append(name)
-        #append the encoding and associated name to relevant lists
-    return logged_face_encodings, logged_face_names
+        print(F"PID:{pid} name:{name}")
+        query = {"name": pid}
+        for encoding_doc in db["Bear_Encodings"].find(query):
+            #print(">>"+encoding_doc)
+            encoding = encoding_doc["encoding"]
+            count+=1
+
+            student_encodings.append(np.array(encoding))
+            student_names.append(name)
+            student_PID.append(pid)
+        print(f"encoding gathered from DB ~ [{name}]")
+    return student_encodings, student_names,student_PID
+        
 
 def insert_encoding(encoding,friends,register,encodings):
-    name = input("enter the students firstname and lastname in the form 'first last' in all lowercase")
-    yob = input("enter the students birth year in the form '20xx': ")
+    name = input("enter the students firstname and lastname in the form 'first last':\n")
+    yob = input("enter the students birth year in the form '20xx':\n")
     name_split = name.split() 
     pid = "0"+name_split[0][0]+name_split[0][-1]+name_split[1][0]+name_split[1][-1]+"0"+yob[-2:]
     friend_obj = {
@@ -50,9 +58,13 @@ def insert_encoding(encoding,friends,register,encodings):
         "PID": pid,
         "encoding": encoding
     }
-    x = friends.insert_one(friend_obj)
-    y = register.insert_one(reg_obj)
+    query = {"PID":pid}
+    if not friends.find(query):
+        print("student added to database")
+        x = friends.insert_one(friend_obj)
+        y = register.insert_one(reg_obj)
     z = encodings.insert_one(encoding_obj)
+    print("student encodings refined")
     
 
 client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")#connect to the mongodb
@@ -62,12 +74,12 @@ register = db["Bear_register"]# select the register collection from the db
 encodings = db["Bear_Encodings"]
 
 start_load = datetime.datetime.now()
-student_encodings, student_names = load_encodings(encodings)
+student_encodings, student_names,student_PID = load_encodings(db)
 end_load = datetime.datetime.now()
 time_to_load = end_load - start_load
 print("encodings collected in ["+str(round(time_to_load.total_seconds()*1000,3))+ "]ms")
 
-sensitivity = input("how high would you like your detection sensitivity? (high/medium/low): ")
+sensitivity = input("how high would you like your detection sensitivity? (high/med/low):\n")
 if sensitivity.lower() == "high":
     value = 0.9
 elif sensitivity.lower() == "med":
@@ -75,10 +87,12 @@ elif sensitivity.lower() == "med":
 elif sensitivity.lower() == "low":
     value = 0.6
 
+print("initialising video stream...")
+
 stream = cv2.VideoCapture(0)
 
+every_other_frame = True
 
-every_other_frame = 0
 
 while True:
     ret,frame = stream.read()
@@ -105,13 +119,13 @@ while True:
 
         box_colour = (0,255,0)
         if name == "Not Recognised":
-            print("student face not recognised")
+            #print("student face not recognised")
             box_colour = (0,0,255)
             current_index = live_names.index(name)
             unknown_encoding = live_encodings[current_index]
             unknown_encoding = unknown_encoding.tolist()
             insert_encoding(unknown_encoding,friends,register,encodings)
-            student_encodings,student_names = load_encodings(encodings)
+            student_encodings, student_names,student_PID = load_encodings(db)
             continue
         else:
             post2server(left,right,name)
