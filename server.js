@@ -21,7 +21,7 @@ const app = express();
 const pug = require('pug');
 
 const MongoClient = require("mongodb").MongoClient;
-const dbUrl = "mongodb://localhost:27017/";
+const dbUrl = "mongodb://127.0.0.1:27017/";
 
 const path = require("path");
 const file = require("fs");
