@@ -28,7 +28,6 @@ def load_encodings(db):
         for encoding_doc in db["Bear_Encodings"].find(query):
             #print(">>"+encoding_doc)
             encoding = encoding_doc["encoding"]
-            count+=1
 
             student_encodings.append(np.array(encoding))
             student_names.append(name)
@@ -40,12 +39,20 @@ def load_encodings(db):
 def insert_encoding(encoding,friends,register,encodings):
     name = input("enter the students firstname and lastname in the form 'first last':\n")
     yob = input("enter the students birth year in the form '20xx':\n")
+    position = ""
+    while position not in ["1", "0"]:
+        position = input(f"is {name} a 'student' or 'staff:\n").lower()
+        if position == "staff":
+            position = "1"
+        elif position == "student":
+            position = "0"
     name_split = name.split() 
-    pid = "0"+name_split[0][0]+name_split[0][-1]+name_split[1][0]+name_split[1][-1]+"0"+yob[-2:]
+    #pid = "0"+name_split[0][0]+name_split[0][-1]+name_split[1][0]+name_split[1][-1]+"0"+yob[-2:]
+    pid = f"{position}{name_split[0][0]}{name_split[0][-1]}{name_split[1][0]}{name_split[1][-1]}0{yob[-2:]}"
     friend_obj = {
         "name":name,
         "PID": pid,
-        "position":"student",
+        "position":position,
         "YOB": yob
     }
     reg_obj = {
@@ -111,6 +118,7 @@ while True:
             if matches[best_encoding]:
                 name = student_names[best_encoding]
             live_names.append(name)
+    every_other_frame = not every_other_frame
     for (top,right,bottom,left), name in zip(live_locations,live_names):
         top *= 4
         right *= 4

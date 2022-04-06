@@ -5,13 +5,14 @@ const rl = readline.createInterface({
     output: process.stdout,
   });
 const {exec} = require("child_process");
-var SerialPort = require('serialport');
+const {SerialPort} = require('serialport');
 try{
-    var port = new SerialPort("COM7", {baudRate:9600});
+    var port = new SerialPort({path:"COM9",baudRate:9600});
 }
 catch(err){
     console.log("ARDUINO NOT FOUND");
     console.log("connect arduino board to allow for serial communication with The Bear")
+    console.log(">-->"+err);
 }
 const bodyParser = require('body-parser');
 const express = require("express");
@@ -180,11 +181,11 @@ app.post('/face',(req,res)=>{
     var hour = data.time;
     if (x > 320) {
         console.log(x);
-        //turnRight(port);
+        turnRight(port);
     }
     if (w < 320) {
         console.log(w)
-        //turnLeft(port);
+        turnLeft(port);
     }
     if (x < 320 && w > 320){
         register(MongoClient,dbUrl,student, hour);
