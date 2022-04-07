@@ -79,6 +79,8 @@ db = client["Bear"]#select database
 friends = db["Bear_Friends"]#select collection (table) from the db
 register = db["Bear_register"]# select the register collection from the db
 encodings = db["Bear_Encodings"]
+settings = db["Bear_Settings"]
+#select db and all tables
 
 start_load = datetime.datetime.now()
 student_encodings, student_names,student_PID = load_encodings(db)
@@ -86,17 +88,11 @@ end_load = datetime.datetime.now()
 time_to_load = end_load - start_load
 print("encodings collected in ["+str(round(time_to_load.total_seconds()*1000,3))+ "]ms")
 
-sensitivity = input("how high would you like your detection sensitivity? (high/med/low):\n")
-if sensitivity.lower() == "high":
-    value = 0.9
-elif sensitivity.lower() == "med":
-    value = 0.75
-elif sensitivity.lower() == "low":
-    value = 0.6
-
+setting = settings.find_one()
+value = float(setting["sensitivity"])
 print("initialising video stream...")
 
-stream = cv2.VideoCapture(0)
+stream = cv2.VideoCapture(1)
 
 every_other_frame = True
 
@@ -105,14 +101,19 @@ while True:
     ret,frame = stream.read()
     resized_frame = cv2.resize(frame,(0,0),fx=0.25,fy=0.25)
     brg_frame = resized_frame[:,:,::-1]
+    #get image and format it for processing
+
 
     if every_other_frame:
+        #skip avery other frame to save processing
         live_locations = face_recognition.face_locations(brg_frame)
         live_encodings = face_recognition.face_encodings(brg_frame, live_locations)
+        #get locations and encodings for every face in the frame
         live_names = []
         for current_encoding in live_encodings:
-            matches = face_recognition.compare_faces(student_encodings,current_encoding)
+            matches = face_recognition.compare_faces(student_encodings,current_encoding,value)
             name = "Not Recognised"
+            #default name unless recognised
             live_distances = face_recognition.face_distance(student_encodings, current_encoding)
             best_encoding = np.argmin(live_distances)
             if matches[best_encoding]:

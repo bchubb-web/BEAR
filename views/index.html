@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:3000/ -->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./index_files/style.css">
+        <title>TED</title>
+    </head>
+    <body>
+        <header>
+            <div class="header-icon">
+                <img src="./index_files/teddy-bear.svg" alt="bear">
+                <h1>The Bear</h1>
+            </div>
+            <h3 class="header-sub">Automated Registration System (ARS)</h3>
+            <p class="header-min">designed and built by Billy Chubb</p>
+        </header>
+        <main>
+            <section class="sect-col col-left"> 
+                <h2>Are students signing IN or Out?</h2>
+                <form action="http://localhost:3000/ATTENTION" method="post" id="reg">
+                    <button name="BUTTON" value="IN" id="in">IN</button>
+                    <button name="BUTTON" value="OUT" id="out">OUT</button>
+                </form>
+            </section>
+            <section class="sect-col col-mid">
+                <h2>The Bear's friends:</h2>
+                <div class="friends-cont">
+                    <ul class="friends">
+                        <li>&gt; billy chubb</li>
+                        <li>&gt; millie craddock</li>
+                        <li>&gt; anton ramos</li>
+                        <li>&gt; alan sabu</li>
+                        <li>&gt; noah haley</li><li>&gt; ted raven</li><li>&gt; jeremy pitkin</li>
+                    </ul>
+                </div>
+            </section>
+            <section class="sect-col col-right">
+                <form class="bear-form" action="http://localhost:3000/speak" method="post">
+                    <h2>Type something for the bear to say!</h2>
+                    <p>Interact with and communicate through the bear with this text box, simply type your message and the bear will say it out loud.</p>
+                    <div>
+                        <input type="text" name="text" placeholder="TYPE:"><button type="submit">Say</button>
+                    </div>
+                </form>
+                <form action="http://127.0.0.1:3000/diff" method="post">
+                    <div>
+                        <button class="diff"></button><button class="diff"></button><button class="diff"></button><button type="submit"></button></div>
+                </form>
+            </section>
+        </main>
+        <script src="./index_files/scripts.js.download"></script>
+    </body>
+</html>

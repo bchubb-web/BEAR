@@ -35,5 +35,14 @@ main
       div
         input(type='text' name='text' placeholder='TYPE:')
         button(type='submit') Say
+    form.bear-form.sens(action='/sens' method='post')
+      h2 How sensitive would oyu like student detection to be?
+      div
+        button#low(type="radio" value="0.5")
+        label(for="low") Low 
+        button#med(type="radio" value="0.6")
+        label(for="med") Medium 
+        button#high(type="radio" value="0.8")
+        label(for="high") High 
 
 script(src='public/js/scripts.js')

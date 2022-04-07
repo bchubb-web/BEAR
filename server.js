@@ -46,12 +46,38 @@ global.leave = "";
 function turnLeft(port){
     console.log("LEFT");
     //SENDS SERIAL DATA TO ARDUINO FOR A LEFT TURN
-    port.write('6',function(err){if(err)throw err;});
+    try{
+        port.write('6');
+    }
+    catch(err){
+        console.log("[error] - bear serial connection interupted")
+        try{
+            var port = new SerialPort({path:"COM9",baudRate:9600});
+        }
+        catch(err){
+            console.log("ARDUINO NOT FOUND");
+            console.log("connect arduino board to allow for serial communication with The Bear")
+            console.log(">-->"+err);
+        }
+    }
 }
 function turnRight(port){
     console.log("RIGHT");
     //SENDS SERIAL DATA TO ARDUINO FOR A RIGHT TURN
-    port.write('9',function(err){if(err)throw err;});
+    try{
+        port.write('9');
+    }
+    catch(err){
+        console.log("[error] - bear serial connection interupted")
+        try{
+            var port = new SerialPort({path:"COM9",baudRate:9600});
+        }
+        catch(err){
+            console.log("ARDUINO NOT FOUND");
+            console.log("connect arduino board to allow for serial communication with The Bear")
+            console.log(">-->"+err);
+        }
+    }
 }
 
 function get_attending(MongoClient, url){

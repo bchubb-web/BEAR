@@ -199,22 +199,3 @@ main{
 .sign{
     font-size: x-small;
 }
-input[type="radio" i] {
-    background-color: initial;
-    cursor: default;
-    appearance: auto;
-    box-sizing: border-box;
-    margin: 3px 3px 0px 5px;
-    padding: initial;
-    border: initial;
-}
-#high,#med,#low{
-    background-color: #00d300;
-    border-radius: 100%;
-    cursor: default;
-    appearance: auto;
-    box-sizing: border-box;
-    margin: 3px 3px 0px 5px;
-    padding: 0;
-    border: initial;
-}

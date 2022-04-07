@@ -30,12 +30,12 @@ void loop() {
     if (data == '9' && pos > 0){
       //rightStep();
       Serial.println("right");
-      pos-=4;
+      pos-=2;
     }
     else if(data == '6' && pos < 180){
       Serial.println("left");
       //leftStep();
-      pos+=4;
+      pos+=2;
     }
     neck.write(pos);
    }  
