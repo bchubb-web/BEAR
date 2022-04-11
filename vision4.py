@@ -35,6 +35,7 @@ def load_encodings(db):
         print(f"encoding gathered from DB ~ [{name}]")
     return student_encodings, student_names,student_PID
         
+        
 
 def insert_encoding(encoding,friends,register,encodings):
     name = input("enter the students firstname and lastname in the form 'first last':\n")

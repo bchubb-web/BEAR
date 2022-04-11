@@ -11,24 +11,60 @@ html(lang='en')
       .header-icon
         img(src='public/images/teddy-bear.svg', alt='bear')
         h1 The Bear
-      h3.header-sub Automated Registration System (ARS)
+      h3.header-sub Automated Student Registration System (ASRS)
       p.header-min designed and built by Billy Chubb
     main
       section.sect-col.col-left.reg-main
         table.reg-table
           tbody
             tr
-              //th PID
               th Student
               th Last Sign
               th Status
             each val, index in students
                 tr
-                //td.pid= students[index].friend-id
-                td.name= students[index].name
-                td.sign= students[index].last
-                if students[index].attending == "IN"
-                    td.status#in= students[index].attending
+                  td.name= students[index].name
+                  td.sign= students[index].last
+                  if students[index].attending == "IN"
+                      td.status#in= students[index].attending
+                  else 
+                      td.status#out= students[index].attending
+
+
+          tbody
+            tr 
+              th Staff
+              th Last Sign
+              th Status
+            each val, index in staff
+              tr 
+                td.name= staff[index].name
+                td.sign= staff[index].last
+                if staff[index].attending == "IN"
+                    td.status#in= staff[index].attending
                 else 
-                    td.status#out= students[index].attending
+                    td.status#out= staff[index].attending
       section.sect-col.col-right.reg-side
+        a(href="/") return to homepage
+        br
+        br
+        h4 add new student or staff
+        br
+        form(action='/add_member' method='post')
+          label(for='name') Enter First and Last names
+          br
+          input(type='text' name='first')
+          input(type='text' name='last')
+          br
+          label(for='name') Year of birth
+          br
+          input(type='text' name='yob')
+          br
+          label(for='name') enter position
+          br
+          select#position(name='position')
+            option(value='0') Student
+            option(value='1') Staff
+          br
+          br
+          button(type='submit') Submit

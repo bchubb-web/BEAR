@@ -9,7 +9,7 @@ header
   .header-icon
     img(src='public/images/teddy-bear.svg' alt='bear')
     h1 The Bear
-  h3.header-sub Automated Registration System (ARS)
+  h3.header-sub Automated Student Registration System (ASRS)
   p.header-min designed and built by Billy Chubb
 
 
@@ -27,6 +27,8 @@ main
       ul.friends
         each val in friends
           li= val
+    h2 Register
+    a(href="/register") click here to access the register 
   section.sect-col.col-right
     form.bear-form(action='/speak' method='post')
       h2 Type something for the bear to say!
