@@ -120,17 +120,19 @@ function register(MongoClient, url, student, time){
     MongoClient.connect(url, function(err,db){
         if(err){return"DB CONNECT FAILED"};
         var dbo = db.db("Bear");
-        var query = {name: student};
+        var query = {PID: student};
         //connect to db, and create query for finding student
 
         dbo.collection("Bear_register").find(query,{projection:{_id:0,name:0}}).toArray(function(err,result){
             if(err){throw err};
-                var attend_query = {main: "THIS"};
+            console.log(result[0]);
+                var attend = result[0]["attending"];
                 //query to find the settings document
+                var attend_query = {main: "THIS"};
                 dbo.collection("Bear_Settings").find(attend_query,{projection:{attending_val:1}}).toArray(function(err,settings){
                     if(err){throw err};
                     var register_val =  settings[0]["attending_val"];
-                    if (result[0]["attending"] != register_val){
+                    if (attend != register_val){
                         //if the students atteending value is differnet from the settings value
                         var stuVal = { $set: {attending: register_val, last: time}}; // declare new values with iverted attending status
                         console.log(stuVal);
