@@ -7,7 +7,7 @@ const rl = readline.createInterface({
 const {exec} = require("child_process");
 const {SerialPort} = require('serialport');
 try{
-    var port = new SerialPort({path:"COM9",baudRate:9600});
+    var port = new SerialPort({path:"COM3",baudRate:9600});
 }
 catch(err){
     console.log("ARDUINO NOT FOUND");
@@ -26,6 +26,7 @@ const dbUrl = "mongodb://127.0.0.1:27017/";
 const path = require("path");
 const file = require("fs");
 const { CLIENT_RENEG_WINDOW } = require('tls');
+const { setFlagsFromString } = require('v8');
 
 
 //  INIT EXPRESS FOLDERS
@@ -149,6 +150,12 @@ function register(MongoClient, url, student, time){
     });
 }
 
+function add_student(MongoClient,url,data){
+    MongoClient.connect(url,function(err,db){
+
+    })
+}
+
 //  SET
 
 app.set('views',path.join(__dirname+'/views'));
@@ -185,13 +192,24 @@ app.get('/',(req,res) => {
 });
 
 app.get('/register', (req,res) => {
+    var staff = [];
+    var students = [];
     MongoClient.connect(dbUrl,{useUnifiedTopology:true}, function(err,db){
         if(err)throw err;
         var dbo = db.db("Bear");
         dbo.collection("Bear_register").find({}).toArray(function(err,result){
             if(err) throw err;
+            for(var i=0;i<result.length;i++){
+                var pid = result[i].PID;
+                if(pid.charAt(0) == "1"){
+                    staff.push(result[i]);
+                }
+                else{
+                    students.push(result[i]);
+                }
+            }
                 //console.log(result);
-            res.render('register',{students: result});
+            res.render('register',{students: students,staff:staff});
             db.close();
         });
     });
@@ -227,6 +245,44 @@ app.post('/ATTENTION', (req,res)=>{
     var attention = request.BUTTON;
     update_attending(MongoClient,dbUrl, attention);
     return res.redirect("/");
+});
+
+app.post('/add_member', (req,res) =>{
+    var body = req.body;
+    var name = body.first+" "+body.last;
+    var YOB = body.yob;
+    var position = body.position;
+    var PID = position + body.first.charAt(0) + body.first.charAt(body.first.length -1) + body.last.charAt(0) + body.last.charAt(body.last.length -1) + "0" +YOB.slice(-2);
+    //console.log(PID);
+    MongoClient.connect(dbUrl,{useUnifiedTopology: true}, function(err,db){
+        if(err)throw err;
+        var dbo = db.db("Bear");
+        var reg_obj = {
+            "name": name,
+            "PID": PID,
+            "attending": "NULL",
+            "last": "NULL"
+        };
+
+        var friend_obj = {
+            "name":name,
+            "PID": PID,
+            "position":position,
+            "YOB": YOB
+        };
+
+        
+        dbo.collection("Bear_register").insertOne(reg_obj, function(err, res) {
+            if (err) throw err;
+            console.log(reg_obj);
+        });
+
+        dbo.collection("Bear_Friends").insertOne(friend_obj, function(err, res) {
+            if (err) throw err;
+            console.log(friend_obj);
+        });
+    });
+    res.redirect('/register')
 });
 
 

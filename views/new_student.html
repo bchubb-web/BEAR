@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:3000/ -->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./index_files/style.css">
+        <title>TED</title>
+    </head>
+    <body>
+        <header>
+            <div class="header-icon">
+                <img src="./index_files/teddy-bear.svg" alt="bear">
+                <h1>The Bear</h1>
+            </div>
+            <h3 class="header-sub">Automated Registration System (ARS)</h3>
+            <p class="header-min">designed and built by Billy Chubb</p>
+        </header>
+        <main>
+            <section class="sect-col">
+                <form action="/add_member" method="post">
+                    <strong><label for="name">Enter First and Last names</label></strong>
+                    <br>
+                    <input type="text" name="first"><input type="text" name="last">
+                    <br>
+                    <strong><label for="name">Year of birth</label></strong>
+                    <br>
+                    <input type="text" name="YOB">
+                    <br>
+                    <strong><label for="name">enter position</label></strong>
+                    <br>
+                    <select name="position" id="position">
+                        <option value="student">Student</option>
+                        <option value="staff">Staff</option>
+                    </select>
+                    <br>
+                    <button type="submit">Submit</button>
+                </form>
+            </section>
+        </main>
+        <script src="./index_files/scripts.js.download"></script>
+    </body>
+</html>
