@@ -22,6 +22,7 @@ def load_encodings(db):
     student_names = []
     student_PID = []
     for document in db["Bear_Friends"].find():
+        print(document)
         pid = document["PID"]
         name = document["name"]
         print(F"PID:{pid} name:{name}")
@@ -33,10 +34,29 @@ def load_encodings(db):
             student_encodings.append(np.array(encoding))
             student_names.append(name)
             student_PID.append(pid)
+
         print(f"encoding gathered from DB ~ [{name}]")
     return student_encodings, student_names,student_PID
         
+def load_encodings(db):
+    student_encodings = []
+    student_names = []
+    student_PID = []
+    for encoding_doc in db["Bear_Encodings"].find():
+        #print(">>"+encoding_doc)
+        encoding = encoding_doc["encoding"]
+        pid = encoding_doc["PID"]
+        #name = db["Bear_friends"].find_one({"PID":pid})
+        #name = name["name"]
+        student_encodings.append(np.array(encoding))
+        student_names.append(pid)
+        student_PID.append(pid)
+        print(f"encoding gathered from DB ~ [{pid}]")
+    return student_encodings, student_names,student_PID
+    
         
+    
+
 
 def insert_encoding(encoding:list,friends,register,encodings):
     name = input("enter the students firstname and lastname in the form 'first last':\n")
@@ -94,13 +114,15 @@ setting = settings.find_one()
 value = float(setting["sensitivity"])
 print("initialising video stream...")
 
-stream = cv2.VideoCapture(1)
+stream = cv2.VideoCapture(0)
+bear = cv2.VideoCapture(1)
 
 every_other_frame = True
 
 
 while True:
     ret,frame = stream.read()
+    ret2, bear_frame = bear.read()
     resized_frame = cv2.resize(frame,(0,0),fx=0.25,fy=0.25)
     brg_frame = resized_frame[:,:,::-1]
     #get image and format it for processing
@@ -147,6 +169,7 @@ while True:
         cv2.putText(frame,name,(left+6,bottom-14),font,0.6,(255,255,255),1)
 
     cv2.imshow("Automated Register System Video Feed", frame)
+    cv2.imshow("Bear View", bear_frame)
 
     if cv2.waitKey(1)&0xff == ord('q'):
         break
