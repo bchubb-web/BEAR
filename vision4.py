@@ -1,15 +1,16 @@
 import encodings
 from time import strftime
+from typing import Any
 import pymongo
 import requests
 import face_recognition
 import cv2
 import numpy as np
 import datetime
-import timeit
 
 
-def post2server(x,w,student):
+
+def post2server(x:int,w,student:str):
     time = datetime.datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
     url = "http://127.0.0.1:3000/face"
     form = f"x={x}&w={w}&student={student}&time={time}"
@@ -37,7 +38,7 @@ def load_encodings(db):
         
         
 
-def insert_encoding(encoding,friends,register,encodings):
+def insert_encoding(encoding:list,friends,register,encodings):
     name = input("enter the students firstname and lastname in the form 'first last':\n")
     yob = input("enter the students birth year in the form '20xx':\n")
     position = ""
