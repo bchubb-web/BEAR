@@ -219,7 +219,6 @@ app.get('/register', (req,res) => {
 //  POST
 
 app.post('/face',(req,res)=>{
-    //console.log(req.body);
     data = req.body;
     var x = parseInt(data.x);
     var w = parseInt(data.w);
@@ -236,7 +235,6 @@ app.post('/face',(req,res)=>{
     if (x < 320 && w > 320){
         register(MongoClient,dbUrl,student, hour);
     }
-    //if face is off-center, send serial data to arduino to rotate stepper motor to rectify
     res.sendStatus(200)
 });
 

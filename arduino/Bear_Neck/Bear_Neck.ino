@@ -11,13 +11,7 @@ void setup() {
   // put your setup code here, to run once:
   neck.attach(9);
   Serial.begin(9600);
-  /*
-  neck.write(0);
-  delay(500);
-  neck.write(180);
-  delay(1000);
-  neck.write(90);
-  delay(400);*/
+
 }
 
 void loop() {

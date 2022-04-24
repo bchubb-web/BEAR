@@ -169,7 +169,6 @@ while True:
         cv2.putText(frame,name,(left+6,bottom-14),font,0.6,(255,255,255),1)
 
     cv2.imshow("Automated Register System Video Feed", frame)
-    cv2.imshow("Bear View", bear_frame)
 
     if cv2.waitKey(1)&0xff == ord('q'):
         break
