@@ -7,7 +7,7 @@ const rl = readline.createInterface({
 const {exec} = require("child_process");
 const {SerialPort} = require('serialport');
 try{
-    var port = new SerialPort({path:"COM3",baudRate:9600});
+    var port = new SerialPort({path:"COM9",baudRate:9600});
 }
 catch(err){
     console.log("ARDUINO NOT FOUND");
@@ -123,8 +123,8 @@ function register(MongoClient, url, student, time){
         var dbo = db.db("Bear");
         var query = {PID: student};
         //connect to db, and create query for finding student
-
-        dbo.collection("Bear_register").find(query,{projection:{_id:0,name:0}}).toArray(function(err,result){
+        console.log(query);
+        dbo.collection("Bear_register").find(query,{projection:{_id:0}}).toArray(function(err,result){
             if(err){throw err};
             console.log(result[0]);
                 var attend = result[0]["attending"];
@@ -219,7 +219,7 @@ app.get('/register', (req,res) => {
 //  POST
 
 app.post('/face',(req,res)=>{
-    //console.log(req.body);
+    console.log(req.body);
     data = req.body;
     var x = parseInt(data.x);
     var w = parseInt(data.w);
@@ -283,6 +283,19 @@ app.post('/add_member', (req,res) =>{
         });
     });
     res.redirect('/register')
+});
+
+app.post('/sens', (req,res) => {
+    var sens = req.body.sens;
+    MongoClient.connect(dbUrl,{useUnifiedTopology:true}, function(err,db){
+        if(err)throw err;
+        var dbo = db.db("Bear");
+        dbo.collection("Bear_Settings").updateOne({main:"THIS"}, {$set: {sensitiviity:"sens"}},function(err,res){
+            if(err)throw err;
+            console.log("updated");
+        });
+    });
+    res.redirect('/');
 });
 
 

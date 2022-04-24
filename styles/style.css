@@ -209,12 +209,24 @@ input[type="radio" i] {
     border: initial;
 }
 #high,#med,#low{
-    background-color: #00d300;
-    border-radius: 100%;
+    border-radius: 10%;
     cursor: default;
-    appearance: auto;
-    box-sizing: border-box;
     margin: 3px 3px 0px 5px;
     padding: 0;
+    width: 20px;
+    height: 20px;
     border: initial;
+}
+
+
+#high{
+    background-color: #FF0000;
+}
+
+#med{
+    background-color: #ffff00;
+}
+
+#low{
+    background-color: #00d300;
 }

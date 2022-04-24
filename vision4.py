@@ -114,14 +114,14 @@ value = float(setting["sensitivity"])
 print("initialising video stream...")
 
 stream = cv2.VideoCapture(0)
-bear = cv2.VideoCapture(1)
+#bear = cv2.VideoCapture(1)
 
 every_other_frame = True
 
 
 while True:
     ret,frame = stream.read()
-    ret2, bear_frame = bear.read()
+    #ret2, bear_frame = bear.read()
     resized_frame = cv2.resize(frame,(0,0),fx=0.25,fy=0.25)
     brg_frame = resized_frame[:,:,::-1]
     #get image and format it for processing
@@ -168,7 +168,7 @@ while True:
         cv2.putText(frame,name,(left+6,bottom-14),font,0.6,(255,255,255),1)
 
     cv2.imshow("Automated Register System Video Feed", frame)
-    cv2.imshow("Bear View", bear_frame)
+    #cv2.imshow("Bear View", bear_frame)
 
     if cv2.waitKey(1)&0xff == ord('q'):
         break
