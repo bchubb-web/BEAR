@@ -1,17 +1,16 @@
 #include <Servo.h>
 
 Servo neck;
+//define a servo object as neck
 
 int pos = 90;
-
-
-
+//start with the head facing forwards
 
 void setup() {
-  // put your setup code here, to run once:
   neck.attach(9);
+  //define pin 9 for the servo control
   Serial.begin(9600);
-
+  //start serial 
 }
 
 void loop() {
@@ -19,49 +18,17 @@ void loop() {
   if(Serial.available()> 0){
     char data = Serial.read();
     Serial.println(data);
-    //Serial.println("pos:"+pos);
-    
+    //get serial data
     if (data == '9' && pos > 0){
-      //rightStep();
+      //decrease position
       Serial.println("right");
       pos-=2;
     }
     else if(data == '6' && pos < 180){
       Serial.println("left");
-      //leftStep();
+      //increase posotion
       pos+=2;
     }
     neck.write(pos);
-   }  
-    /*else{
-      if(pos < 90 && pos >= 0){
-        pos+=4;
-      }
-      else if(pos <= 180 && pos > 90){
-        pos-=4;
-      }
-    }
-    neck.write(pos);
-    
-    /*
-switch(data){
-      case '9':
-        rightStep();
-        break;
-     
-     case '6':
-        leftStep();
-        break;
-
-     default:
-     if(pos < 90 && pos >= 0){
-      leftStep();
-     }
-     else if(pos <= 180 && pos > 90){
-      rightStep();
-     }
-        //break;
-     }*/
-  
-
+   } 
 }

@@ -83,15 +83,15 @@ function turnRight(port){
 
 function get_attending(MongoClient, url){
     var value = "";
-    MongoClient.connect(url, function(err,db){
+    MongoClient.connect(url, function(err,db){//connect to db
         if(err){throw err};
         var dbo = db.db("Bear");
         var attend_query = {main: "THIS"};
         //select the settings document
-        dbo.collection("Bear_Settings").find(attend_query,{projection:{attending_val:1}}).toArray(function(err,result){
+        dbo.collection("Bear_Settings").find(attend_query,{projection:{attending_val:1}}).toArray(function(err,result){//find settings document
             if(err){throw err};
             console.log(result[0]["attending_val"]);
-            value =  result[0]["attending_val"];
+            value =  result[0]["attending_val"];//get attending value
         });
     });
     while(value == ""){
@@ -101,7 +101,7 @@ function get_attending(MongoClient, url){
 }
 
 function update_attending(MongoClient, url, data){
-    MongoClient.connect(url,function(err,db){
+    MongoClient.connect(url,function(err,db){//connect to db
         if(err){throw err}
         var dbo = db.db("Bear");
         var query = {main: "THIS"};
@@ -150,11 +150,7 @@ function register(MongoClient, url, student, time){
     });
 }
 
-function add_student(MongoClient,url,data){
-    MongoClient.connect(url,function(err,db){
 
-    })
-}
 
 //  SET
 
@@ -194,22 +190,22 @@ app.get('/',(req,res) => {
 app.get('/register', (req,res) => {
     var staff = [];
     var students = [];
-    MongoClient.connect(dbUrl,{useUnifiedTopology:true}, function(err,db){
+    MongoClient.connect(dbUrl,{useUnifiedTopology:true}, function(err,db){//connect to db
         if(err)throw err;
         var dbo = db.db("Bear");
-        dbo.collection("Bear_register").find({}).toArray(function(err,result){
+        dbo.collection("Bear_register").find({}).toArray(function(err,result){//get register documents
             if(err) throw err;
-            for(var i=0;i<result.length;i++){
+            for(var i=0;i<result.length;i++){//iterate through documents
                 var pid = result[i].PID;
                 if(pid.charAt(0) == "1"){
-                    staff.push(result[i]);
+                    staff.push(result[i]);//add to staff list
                 }
                 else{
-                    students.push(result[i]);
+                    students.push(result[i]);//add to student list
                 }
             }
                 //console.log(result);
-            res.render('register',{students: students,staff:staff});
+            res.render('register',{students: students,staff:staff});//render page
             db.close();
         });
     });
@@ -220,21 +216,25 @@ app.get('/register', (req,res) => {
 
 app.post('/face',(req,res)=>{
     console.log(req.body);
+
+    //get data from request
     data = req.body;
     var x = parseInt(data.x);
     var w = parseInt(data.w);
     var student = data.student;
     var hour = data.time;
-    if (x > 320) {
+
+
+    if (x > 320) {//turn right
         console.log(x);
         turnRight(port);
     }
-    if (w < 320) {
+    if (w < 320) {//turn left
         console.log(w)
         turnLeft(port);
     }
     if (x < 320 && w > 320){
-        register(MongoClient,dbUrl,student, hour);
+        register(MongoClient,dbUrl,student, hour);//register student
     }
     res.sendStatus(200)
 });
@@ -251,8 +251,15 @@ app.post('/add_member', (req,res) =>{
     var name = body.first+" "+body.last;
     var YOB = body.yob;
     var position = body.position;
+    //generate pid
+    //position bit, 0=student 1=staff
+    //first and last letters of the first name
+    //first and last letters of the last name
+    //filler 0
+    //last 2 digits of year of birth
     var PID = position + body.first.charAt(0) + body.first.charAt(body.first.length -1) + body.last.charAt(0) + body.last.charAt(body.last.length -1) + "0" +YOB.slice(-2);
-    //console.log(PID);
+
+    //insert data into db
     MongoClient.connect(dbUrl,{useUnifiedTopology: true}, function(err,db){
         if(err)throw err;
         var dbo = db.db("Bear");
@@ -289,7 +296,7 @@ app.post('/sens', (req,res) => {
     MongoClient.connect(dbUrl,{useUnifiedTopology:true}, function(err,db){
         if(err)throw err;
         var dbo = db.db("Bear");
-        dbo.collection("Bear_Settings").updateOne({main:"THIS"}, {$set: {sensitiviity:"sens"}},function(err,res){
+        dbo.collection("Bear_Settings").updateOne({main:"THIS"}, {$set: {sensitiviity:"sens"}},function(err,res){//update settings document
             if(err)throw err;
             console.log("updated");
         });

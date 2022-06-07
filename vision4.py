@@ -11,43 +11,26 @@ import datetime
 
 
 def post2server(x:int,w,student:str):
+    #create form and insert formdata
     time = datetime.datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
     url = "http://127.0.0.1:3000/face"
     form = f"x={x}&w={w}&student={student}&time={time}"
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    #send request
     res = requests.request("POST", url,headers=headers,data=form)
 
-def load_encodings(db):
-    student_encodings = []
-    student_names = []
-    student_PID = []
-    for document in db["Bear_Friends"].find():
-        print(document)
-        pid = document["PID"]
-        name = document["name"]
-        print(F"PID:{pid} name:{name}")
-        query = {"name": pid}
-        for encoding_doc in db["Bear_Encodings"].find(query):
-            #print(">>"+encoding_doc)
-            encoding = encoding_doc["encoding"]
-
-            student_encodings.append(np.array(encoding))
-            student_names.append(name)
-            student_PID.append(pid)
-
-        print(f"encoding gathered from DB ~ [{name}]")
-    return student_encodings, student_names,student_PID
         
 def load_encodings(db):
     student_encodings = []
     student_names = []
     student_PID = []
-    for encoding_doc in db["Bear_Encodings"].find():
-        #print(">>"+encoding_doc)
+    for encoding_doc in db["Bear_Encodings"].find():#find all encodings in collection
+
+        #extract all data
         encoding = encoding_doc["encoding"]
         pid = encoding_doc["PID"]
-        #name = db["Bear_friends"].find_one({"PID":pid})
-        #name = name["name"]
+
+        #add to arrays
         student_encodings.append(np.array(encoding))
         student_names.append(pid)
         student_PID.append(pid)
@@ -59,6 +42,8 @@ def load_encodings(db):
 
 
 def insert_encoding(encoding:list,friends,register,encodings):
+
+    #promt for required input
     name = input("enter the students firstname and lastname in the form 'first last':\n")
     yob = input("enter the students birth year in the form '20xx':\n")
     position = ""
@@ -69,8 +54,16 @@ def insert_encoding(encoding:list,friends,register,encodings):
         elif position == "student":
             position = "0"
     name_split = name.split() 
-    #pid = "0"+name_split[0][0]+name_split[0][-1]+name_split[1][0]+name_split[1][-1]+"0"+yob[-2:]
+
+    #generate PID
+    #position bit, 0=student 1=staff
+    #first and last letters of the first name
+    #first and last letters of the last name
+    #filler 0
+    #last 2 digits of year of birth
     pid = f"{position}{name_split[0][0]}{name_split[0][-1]}{name_split[1][0]}{name_split[1][-1]}0{yob[-2:]}"
+
+    #generate objects
     friend_obj = {
         "name":name,
         "PID": pid,
@@ -88,10 +81,11 @@ def insert_encoding(encoding:list,friends,register,encodings):
         "encoding": encoding
     }
     query = {"PID":pid}
-    if not friends.find(query):
+    if not friends.find(query):#if student doesmt exist
         print("student added to database")
         x = friends.insert_one(friend_obj)
         y = register.insert_one(reg_obj)
+
     z = encodings.insert_one(encoding_obj)
     print("student encodings refined")
     
@@ -122,7 +116,6 @@ every_other_frame = True
 
 while True:
     ret,frame = stream.read()
-    #ret2, bear_frame = bear.read()
     resized_frame = cv2.resize(frame,(0,0),fx=0.25,fy=0.25)
     brg_frame = resized_frame[:,:,::-1]
     #get image and format it for processing
@@ -151,29 +144,31 @@ while True:
         left *= 4
 
         box_colour = (0,255,0)
-        if name == "Not Recognised":
-            #print("student face not recognised")
+        if name == "Not Recognised":#if student ismt recognised
             box_colour = (0,0,255)
             current_index = live_names.index(name)
             unknown_encoding = live_encodings[current_index]
-            unknown_encoding = unknown_encoding.tolist()
-            insert_encoding(unknown_encoding,friends,register,encodings)
-            student_encodings, student_names,student_PID = load_encodings(db)
+            unknown_encoding = unknown_encoding.tolist()#get encoding
+            insert_encoding(unknown_encoding,friends,register,encodings)#insert encoding
+            student_encodings, student_names,student_PID = load_encodings(db)#reload all encodings to include new ones
             continue
         else:
-            post2server(left,right,name)
+            post2server(left,right,name)#send data to server
 
+
+        #generate the box and add student PID
         cv2.rectangle(frame,(left-8,top-8),(right+8,bottom+8),box_colour,2)
         cv2.rectangle(frame,(left,bottom-32),(right,bottom),box_colour,cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame,name,(left+6,bottom-14),font,0.6,(255,255,255),1)
 
-    cv2.imshow("Automated Register System Video Feed", frame)
+    cv2.imshow("Automated Register System Video Feed", frame)#display frame
 
     if cv2.waitKey(1)&0xff == ord('q'):
-        break
-stream.release()
-cv2.destroyAllWindows()
+        break#press Q to exit the program
+
+stream.release()#stop video capture
+cv2.destroyAllWindows()#close window
 
 
 
